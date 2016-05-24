@@ -1,4 +1,4 @@
-package template;
+package org.whatif.tools.view;
 
 import java.awt.BorderLayout;
 

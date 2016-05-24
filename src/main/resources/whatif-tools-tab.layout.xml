@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <VSNode splits="0.05627222412971224 0.055801359798637984 0.1378982118664219">
+        <HSNode splits="0.02813611206485612">
+            <VSNode splits="0.01406805603242806">
+                <CNode>
+                    <Component label="Class hierarchy">
+                        <Property id="pluginId" value="org.protege.editor.owl.OWLAssertedClassHierarchy"/>
+                    </Component>
+                    <Component label="Object property hierarchy">
+                        <Property id="pluginId" value="org.protege.editor.owl.OWLObjectPropertyTree"/>
+                    </Component>
+                    <Component label="Data property hierarchy">
+                        <Property id="pluginId" value="org.protege.editor.owl.OWLDataPropertyTree"/>
+                    </Component>
+                </CNode>
+            </VSNode>
+        </HSNode>
+        <HSNode splits="0.04713831841710132 0.03811387456535483">
+            <CNode>
+                <Component label="Class Description">
+                    <Property id="pluginId" value="org.protege.editor.owl.OWLClassDescription"/>
+                </Component>
+            </CNode>
+            <VSNode splits="0.004764234320669354">
+                <CNode>
+                    <Component label="Members list (inferred)">
+                        <Property id="pluginId" value="org.protege.editor.owl.OWLInferredMembersList"/>
+                    </Component>
+                </CNode>
+            </VSNode>
+        </HSNode>
+        <HSNode splits="0.015659361209088497">
+            <CNode>
+                <Component label="Inference Inspector">
+                    <Property id="pluginId" value="inference.inspector.EntailmentInspectorView"/>
+                </Component>
+            </CNode>
+        </HSNode>
+    </VSNode>
+</layout>
