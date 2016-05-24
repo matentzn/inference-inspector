@@ -17,9 +17,9 @@ import org.semanticweb.owlapi.model.OWLEntity;
  * @author redmond
  *
  */
-public class TemplateMenu extends ProtegeOWLAction {
+public class InferenceInspectorMenu extends ProtegeOWLAction {
 	private static final long serialVersionUID = 749843192372192393L;
-	private Logger logger = Logger.getLogger(TemplateMenu.class);
+	private Logger logger = Logger.getLogger(InferenceInspectorMenu.class);
 
 	@Override
 	public void initialise() throws Exception {		
@@ -31,18 +31,16 @@ public class TemplateMenu extends ProtegeOWLAction {
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		logger.info("Template menu plugin invoked");
+		logger.info("Inference Inspector Menu invoked");
 		OWLWorkspace workspace = getOWLWorkspace();
-		OWLEntity selectedEntity = workspace.getOWLSelectionModel().getSelectedEntity();
-		String message;
-		if (selectedEntity != null) {
-			message = "Hello world! Selected entity = " + getOWLModelManager().getRendering(selectedEntity);
-		}
-		else {
-			message = "Hello world";
-		}
+		StringBuilder message = new StringBuilder();
+		message.append("Inference Inspector"+"\n"+"\n");
+		message.append("Making consequences of modelling actions explicit."+"\n"+"\n");
+		message.append("2016, University of Manchester, Whatif Project"+"\n");
+		message.append("Published under GNU Lesser General Public License"+"\n");
+		message.append("https://github.com/matentzn/inference-inspector"+"\n");
 		JFrame parent = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, workspace);
-		JOptionPane.showMessageDialog(parent, message);
+		JOptionPane.showMessageDialog(parent, message.toString());
 	}
 
 

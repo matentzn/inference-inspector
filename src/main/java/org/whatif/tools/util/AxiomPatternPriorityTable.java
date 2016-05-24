@@ -49,7 +49,7 @@ public class AxiomPatternPriorityTable extends JTable {
 		rows.add(new Object[] { AxiomPatternFactory.getDisjointClassIndirectPattern(), AxiomPriority.P4 });
 		rows.add(new Object[] { AxiomPatternFactory.getMostSpecificTypeAxiomPattern(), AxiomPriority.P2 });
 		rows.add(new Object[] { AxiomPatternFactory.getPropertyCharacteristicAxiomPattern(), AxiomPriority.P4 });
-		rows.add(new Object[] { AxiomPatternFactory.getAssertedAxiomPattern(), AxiomPriority.REMOVE });
+		rows.add(new Object[] { AxiomPatternFactory.getAssertedAxiomPattern(), AxiomPriority.P4 });
 		rows.add(new Object[] { AxiomPatternFactory.getPropertyEqualsInversePattern(), AxiomPriority.P4 });
 		rows.add(new Object[] { AxiomPatternFactory.getDefaultPattern(), AxiomPriority.P3 });
 

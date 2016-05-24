@@ -4,7 +4,7 @@
        <extension id="example.menu"
                point="org.protege.editor.core.application.EditorKitMenuAction">
         <name value="About Inference Inspector"/>
-        <class value="org.whatif.tools.view.TemplateMenu"/>
+        <class value="org.whatif.tools.view.InferenceInspectorMenu"/>
         <toolTip value="About Inference Inspector"/>
         <path value="org.protege.editor.owl.menu.tools/SlotZ-Z"/>
         <editorKitId value="OWLEditorKit"/>
@@ -13,7 +13,7 @@
    
    <extension id="InferenceInspectorTab" point="org.protege.editor.core.application.WorkspaceTab">
 		<label value="Inference Inspector"/>
-		<class value="org.whatif.tools.view.InferenceInspectorTab"/>
+		<class value="org.protege.editor.core.application.WorkspaceTab"/>
 		<index value="Y"/>
 		<editorKitId value="OWLEditorKit"/>
 		<defaultViewConfigFileName value="whatif-tools-tab.layout.xml"/>
