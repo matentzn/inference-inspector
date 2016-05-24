@@ -253,12 +253,8 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 
 	TautologyManager tautologytracker = null;
 
-	/*
-	 * boolean axt_acsub_performed = false; boolean axt_aassert_performed =
-	 * false; boolean axt_property_assert_performed = false; boolean
-	 * axt_equiv_performed = false; boolean axt_disj_performed = false; boolean
-	 * axt_character_performed = false;
-	 */
+	JButton bt_axtypes_advanced = new JButton("Advanced");
+
 	JButton bt_entity_filter_reset = new JButton("Reset");
 	JButton bt_entity_filter = new JButton("Entity Filter");
 	JTextArea entity_select_label = new JTextArea("None selected.");
@@ -370,6 +366,14 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 				EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
 						"entity_filter", "NA", "wii");
 				dialog_selectentity.setVisible(true);
+			}
+		});
+		
+		bt_axtypes_advanced.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JPanel panel_at_advanced_plus_label = getLabelledGridLayoutPanel("Advanced Axiom Type Selection",
+						axiomtypelist);
+				JOptionPane.showMessageDialog(EntailmentInspectorView.this, panel_at_advanced_plus_label);
 			}
 		});
 
@@ -744,7 +748,6 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				System.out.println("CL");
 				updateView();
 			}
 		};
@@ -754,7 +757,6 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 	private ActionListener createUpdateViewActionListener() {
 		ActionListener al = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("AL");
 				updateView();
 			}
 		};
@@ -824,8 +826,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 		// JPanel panel_group_plus_label =
 		// getLabelledGridLayoutPanel("Grouping", combo_group);
 		JPanel panel_renderer_plus_label = getLabelledGridLayoutPanel("Renderer", combo_renderer);
-		JPanel panel_at_advanced_plus_label = getLabelledGridLayoutPanel("Advanced Axiom Type Selection",
-				axiomtypelist);
+		
 
 		axiomtypelist.addListSelectionListener(new ListSelectionListener() {
 			@Override
@@ -860,15 +861,17 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 		JPanel tautologypanel = createTautologyCheckboxPanel(cl);
 		
 		filterpanel.add(panel_axiomtypecheckboxes_plus_label);
-		filterpanel.add(Box.createRigidArea(new Dimension(10, 10)));			
+		filterpanel.add(Box.createRigidArea(new Dimension(10, 5)));
+		filterpanel.add(bt_axtypes_advanced);
+		filterpanel.add(Box.createRigidArea(new Dimension(10, 10)));
 		filterpanel.add(new JSeparator(SwingConstants.HORIZONTAL));
 		filterpanel.add(Box.createRigidArea(new Dimension(10, 5)));
 		filterpanel.add(tautologypanel);		
 		filterpanel.add(Box.createRigidArea(new Dimension(10, 10)));			
-		filterpanel.add(new JSeparator(SwingConstants.HORIZONTAL));
-		filterpanel.add(Box.createRigidArea(new Dimension(10, 5)));
-		filterpanel.add(panel_at_advanced_plus_label);
-		filterpanel.add(Box.createRigidArea(new Dimension(10, 10)));
+		//filterpanel.add(new JSeparator(SwingConstants.HORIZONTAL));
+		//filterpanel.add(Box.createRigidArea(new Dimension(10, 5)));
+		//filterpanel.add(panel_at_advanced_plus_label);
+		//filterpanel.add(Box.createRigidArea(new Dimension(10, 10)));
 		//filterpanel.add(new JSeparator(SwingConstants.HORIZONTAL));
 		//filterpanel.add(Box.createRigidArea(new Dimension(10, 5)));
 		//filterpanel.add(panel_renderer_plus_label);
@@ -1551,7 +1554,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 
 	/*
 	 * private void updateDirectinferences(Set<OWLAxiom> axioms) {
-	 * System.out.println("updateTautologies(X) " + axioms.size()); for
+	 * WhatifUtils.p("updateTautologies(X) " + axioms.size()); for
 	 * (OWLAxiom ax : axioms) { if (directinferences.contains(ax) ||
 	 * indirectinferences.contains(ax)) {
 	 * 
@@ -1576,9 +1579,8 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 	}
 
 	public OWLObject updateView() {
-		System.out.println("updateView()");
 		OWLEntity entity = getOWLWorkspace().getOWLSelectionModel().getSelectedEntity();
-		Set<OWLEntity> selectedinselector = new HashSet<OWLEntity>();//getSelectedObjects();
+		Set<OWLEntity> selectedinselector = getSelectedObjects();
 
 		Set<WhatifConsequence> inferred = filterSelectedTypes(this.consequences_inferred);
 		filterTautologies(inferred);
@@ -1637,18 +1639,6 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 			}
 		}
 		axioms_removed.setAxioms(infs);
-		// prepareAxiomsForHierarchyDisplay(inferred);
-		// prepareAxiomsForHierarchyDisplay(removed_inferred);
-
-		// whatif_classhierarchy_added.setAxioms(inferred);
-		// whatif_datapropertyhierarchy_added.setAxioms(inferred);
-		// whatif_objectpropertyhierarchy_added.setAxioms(inferred);
-		// whatif_individualtypehierarchy_added.setAxioms(inferred);
-		// whatif_classhierarchy_removed.setAxioms(inferred);
-
-		// whatif_objectpropertyhierarchy_removed.setAxioms(removed_inferred);
-		// whatif_datapropertyhierarchy_removed.setAxioms(removed_inferred);
-		// whatif_individualtypehiemoved.setAxioms(removed_inferred);
 		updateSplit();
 		return (entity);
 	}
@@ -1659,7 +1649,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 	}
 
 	private void makeSureLost(Set<WhatifConsequence> axioms) {
-		System.err.println("Warning: makeSureLost(). Overly costly function");
+		WhatifUtils.p("Warning: makeSureLost(). Overly costly function");
 		Set<WhatifConsequence> rem = new HashSet<WhatifConsequence>();
 		for (WhatifConsequence con : axioms) {
 			if (con instanceof WhatifInferenceConsequence) {
@@ -1843,7 +1833,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 	private Set<WhatifConsequence> getAdditionConsequences(Set<OWLAxiom> axioms, Set<OWLAxiom> assertions) {
 		WhatifUtils.p("getAdditionConsequences()");
 		/*
-		 * for (OWLAxiom ax : axioms) { System.out.println(ax); }
+		 * for (OWLAxiom ax : axioms) { WhatifUtils.p(ax); }
 		 */
 		Set<WhatifConsequence> cons = new HashSet<WhatifConsequence>();
 		for (OWLAxiom ax : axioms) {
@@ -1931,7 +1921,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 				}
 				tautology += (System.currentTimeMillis() - st);
 			} else if (p instanceof AssertedAxiomPattern) {
-				// System.out.println("Checking asserted: " + axenew);
+				// WhatifUtils.p("Checking asserted: " + axenew);
 				
 				if (p.matchesPattern(axenew, asserted)) {
 					matches.add(p);
@@ -1954,13 +1944,13 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 				if (prio == AxiomPriority.REMOVE) {
 					 continue;
 				}
-				// System.out.println(p.getClass());
+				// WhatifUtils.p(p.getClass());
 				if (p.matchesPattern(axenew,
 						current_profile_reports.get((Class<? extends ProfileAxiomPattern>) p.getClass()))) {
-					// System.out.println("OKIDOKI");
+					// WhatifUtils.p("OKIDOKI");
 					matches.add(p);
 				} else {
-					// System.out.println("NOMATCH");
+					// WhatifUtils.p("NOMATCH");
 				}
 				profile += (System.currentTimeMillis() - st);
 			} else {
@@ -2022,38 +2012,38 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 
 		/*
 		 * for (WhatifAxiom ax : latest.getInferences()) {
-		 * System.out.println(ax.hashCode() + "|" + ax.getOWLAxiom() + "," +
+		 * WhatifUtils.p(ax.hashCode() + "|" + ax.getOWLAxiom() + "," +
 		 * ax.isKnownTautology() + "," + ax.isTautology() + "," +
 		 * ax.getOWLAxiomType()); boolean equal = false; for (WhatifAxiom axin :
 		 * diff.getInferences()) { if (ax.equals(axin)) { equal = true; break; }
 		 * 
-		 * } if (!equal) { System.out.println("Done"); inferred.add(ax); } } for
+		 * } if (!equal) { WhatifUtils.p("Done"); inferred.add(ax); } } for
 		 * (WhatifAxiom ax : diff.getInferences()) {
-		 * System.out.println(ax.hashCode() + "|" + ax.getOWLAxiom() + "," +
+		 * WhatifUtils.p(ax.hashCode() + "|" + ax.getOWLAxiom() + "," +
 		 * ax.isKnownTautology() + "," + ax.isTautology() + "," +
 		 * ax.getOWLAxiomType()); boolean equal = false; for (WhatifAxiom axin :
-		 * latest.getInferences()) { System.out.println(axin.hashCode() + "|" +
+		 * latest.getInferences()) { WhatifUtils.p(axin.hashCode() + "|" +
 		 * axin.getOWLAxiom() + "," + axin.isKnownTautology() + "," +
 		 * axin.isTautology() + "," + axin.getOWLAxiomType()); if
 		 * (ax.equals(axin)) { equal = true; break; } } if (!equal) {
-		 * System.out.println("Done"); removed_inferred.add(ax); } }
+		 * WhatifUtils.p("Done"); removed_inferred.add(ax); } }
 		 */
 		/*
 		 * Set<WhatifAxiom> a = new HashSet<WhatifAxiom>();
 		 * a.addAll(diff.getInferences()); a.removeAll(latest.getInferences());
-		 * System.out.println("A: " + a);
+		 * WhatifUtils.p("A: " + a);
 		 * 
 		 * Set<WhatifAxiom> b = new HashSet<WhatifAxiom>();
 		 * b.addAll(latest.getInferences()); b.removeAll(diff.getInferences());
-		 * System.out.println("B: " + b);
+		 * WhatifUtils.p("B: " + b);
 		 * 
 		 * Set<WhatifAxiom> c = new HashSet<WhatifAxiom>();
 		 * c.addAll(diff.getInferences()); c.retainAll(latest.getInferences());
-		 * System.out.println("C: " + c);
+		 * WhatifUtils.p("C: " + c);
 		 * 
 		 * Set<WhatifAxiom> d = new HashSet<WhatifAxiom>();
 		 * d.addAll(latest.getInferences()); d.retainAll(diff.getInferences());
-		 * System.out.println("D: " + d);
+		 * WhatifUtils.p("D: " + d);
 		 */
 
 		this.consequences_inferred.addAll(latest.getInferences());
@@ -2071,7 +2061,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 			makeSureLost(this.consequences_removed_inferred);
 		}
 
-		// System.out.println("REM: " + a);
+		// WhatifUtils.p("REM: " + a);
 		// WhatifUtils.p("LATEST INDEX: " + history_diffs.indexOf(latest));
 		// WhatifUtils.p("DIFF INDEX: " +
 		// history_diffs.indexOf(selected_history_point));
@@ -2079,10 +2069,10 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 		// WhatifUtils.p("LATEST: " + latest.getInferences());
 		/*
 		 * for (WhatifAxiom ax : removed_inferred) {
-		 * System.out.println(ax.hashCode() + "|" + ax.getOWLAxiom() + "," +
+		 * WhatifUtils.p(ax.hashCode() + "|" + ax.getOWLAxiom() + "," +
 		 * ax.getOWLAxiomType()); for (WhatifAxiom axin : diff.getInferences())
-		 * { System.out.println(axin.hashCode() + "|" + axin.getOWLAxiom() + ","
-		 * + axin.getOWLAxiomType()); System.out.println("EQ: " +
+		 * { WhatifUtils.p(axin.hashCode() + "|" + axin.getOWLAxiom() + ","
+		 * + axin.getOWLAxiomType()); WhatifUtils.p("EQ: " +
 		 * ax.equals(axin)); } }
 		 */
 		// updateTautologies(asserted);
@@ -2162,9 +2152,9 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 			setProgress(20);
 			currentProcess = "Updating inferences..";
 			updateInferrences();
-			System.out.println("TIMING: ");
+			WhatifUtils.p("TIMING: ");
 			for (AxiomPattern p : pattern_timings.keySet()) {
-				System.out.println(p.getClass() + ": " + pattern_timings.get(p));
+				WhatifUtils.p(p.getClass() + ": " + pattern_timings.get(p));
 			}
 
 			currentProcess = "Rendering..";
@@ -2478,7 +2468,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 	@Override
 	public void selectionChanged() throws Exception {
 		if (cb_selected.isSelected()) {
-			System.out.println("SCC");
+			WhatifUtils.p("SCC");
 			updateView();
 		}
 	}
@@ -2610,7 +2600,6 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 			progressBar.setValue(progress);
 			taskOutput.setText(task.getCurrentProcess());
 			if(progress==100) {
-				System.out.println("PC");
 				updateView();
 			}
 		}

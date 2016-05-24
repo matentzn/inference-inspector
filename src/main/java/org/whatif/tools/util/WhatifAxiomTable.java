@@ -58,8 +58,8 @@ public class WhatifAxiomTable extends JTable {
 	int currentfontsize = 14;
 	Map<AxiomPriority, Map<AxiomPattern, Map<WhatifConsequence, Set<WhatifConsequence>>>> grouping = new HashMap<AxiomPriority, Map<AxiomPattern, Map<WhatifConsequence, Set<WhatifConsequence>>>>();
 
-	public WhatifAxiomTable(OWLModelManager owlModelManager, OWLSelectionModel owlSelectionModel, OWLEditorKit editorkit, String name,
-			ProfileVilationProvider pvp) {
+	public WhatifAxiomTable(OWLModelManager owlModelManager, OWLSelectionModel owlSelectionModel,
+			OWLEditorKit editorkit, String name, ProfileVilationProvider pvp) {
 		this.name = name;
 		this.owlModelManager = owlModelManager;
 		this.owlSelectionModel = owlSelectionModel;
@@ -68,38 +68,32 @@ public class WhatifAxiomTable extends JTable {
 
 		setColumnModel(dcm);
 		/*
-		getColumnModel().addColumnModelListener(new TableColumnModelListener() {
-			
-			@Override
-			public void columnSelectionChanged(ListSelectionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void columnRemoved(TableColumnModelEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void columnMoved(TableColumnModelEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void columnMarginChanged(ChangeEvent e) {
-				updateRowHeights();
-			}
-			
-			@Override
-			public void columnAdded(TableColumnModelEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		*/
+		 * getColumnModel().addColumnModelListener(new
+		 * TableColumnModelListener() {
+		 * 
+		 * @Override public void columnSelectionChanged(ListSelectionEvent e) {
+		 * // TODO Auto-generated method stub
+		 * 
+		 * }
+		 * 
+		 * @Override public void columnRemoved(TableColumnModelEvent e) { //
+		 * TODO Auto-generated method stub
+		 * 
+		 * }
+		 * 
+		 * @Override public void columnMoved(TableColumnModelEvent e) { // TODO
+		 * Auto-generated method stub
+		 * 
+		 * }
+		 * 
+		 * @Override public void columnMarginChanged(ChangeEvent e) {
+		 * updateRowHeights(); }
+		 * 
+		 * @Override public void columnAdded(TableColumnModelEvent e) { // TODO
+		 * Auto-generated method stub
+		 * 
+		 * } });
+		 */
 		setModel(dm);
 		tcm = new TableColumnManager(this);
 		dm.setColumnIdentifiers(columns);
@@ -132,7 +126,7 @@ public class WhatifAxiomTable extends JTable {
 	}
 
 	public void setAxioms(final Map<WhatifConsequence, AxiomPriority> axiomsin) {
-		SwingUtilities.invokeLater(new Runnable() {
+		Runnable update = new Runnable() {
 			public void run() {
 				// Update the model here
 
@@ -219,11 +213,12 @@ public class WhatifAxiomTable extends JTable {
 						.setCellEditor(new GroupButtonEditor(new JCheckBox()));
 
 				getColumnModel().getColumn(getColumnModel().getColumnIndex("P")).setCellRenderer(new ColorRenderer());
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("Type")).setCellRenderer(new LineWrapCellRenderer());
+				getColumnModel().getColumn(getColumnModel().getColumnIndex("Type"))
+						.setCellRenderer(new LineWrapCellRenderer());
 
 				getColumnModel().getColumn(getColumnModel().getColumnIndex("OWL"))
-				.setCellRenderer(new AxiomListItemRenderer());
-				//.setCellRenderer(new AxiomAreaRenderer());
+						.setCellRenderer(new AxiomListItemRenderer());
+				// .setCellRenderer(new AxiomAreaRenderer());
 				// setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 				getColumnModel().getColumn(getColumnModel().getColumnIndex("P")).setMinWidth(20);
@@ -245,13 +240,16 @@ public class WhatifAxiomTable extends JTable {
 					tcm.hideColumn(i);
 				}
 
+				// updateRowHeights();
+
+				// setFont(new Font("Serif", Font.BOLD, currentfontsize));
 				updateRowHeights();
-				//updateRowHeights();
-				
-				//setFont(new Font("Serif", Font.BOLD, currentfontsize));
 				repaint();
+				
+
 			}
-		});
+		};
+		SwingUtilities.invokeLater(update);
 	}
 
 	@Override
@@ -283,25 +281,20 @@ public class WhatifAxiomTable extends JTable {
 	@Override
 	public void tableChanged(TableModelEvent e) {
 		super.tableChanged(e);
-		//updateRowHeights();
+		// updateRowHeights();
 		repaint();
 	}
-	
-	public class LineWrapCellRenderer  extends JTextArea implements TableCellRenderer {
 
-	    @Override
-	    public Component getTableCellRendererComponent(
-	            JTable table,
-	            Object value,
-	            boolean isSelected,
-	            boolean hasFocus,
-	            int row,
-	            int column) {
-	        this.setText((String)value);
-	        this.setWrapStyleWord(true);            
-	        this.setLineWrap(true);         
-	        return this;
-	    }
+	public class LineWrapCellRenderer extends JTextArea implements TableCellRenderer {
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+				int row, int column) {
+			this.setText((String) value);
+			this.setWrapStyleWord(true);
+			this.setLineWrap(true);
+			return this;
+		}
 
 	}
 
@@ -424,58 +417,53 @@ public class WhatifAxiomTable extends JTable {
 
 	private class AxiomListItemRenderer implements TableCellRenderer {
 
-        private OWLCellRenderer ren;
-        private OWLOntology o;
+		private OWLCellRenderer ren;
+		private OWLOntology o;
 
-
-        public AxiomListItemRenderer() {
-            ren = new OWLCellRenderer(editorKit);
-        }
-
-
-
+		public AxiomListItemRenderer() {
+			ren = new OWLCellRenderer(editorKit);
+		}
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 				int row, int column) {
 			if (value instanceof WhatifConsequence) {
-            	WhatifConsequence item = ((WhatifConsequence) value);
-                ren.setOntology(o);
-                ren.setHighlightKeywords(true);
-                ren.setWrap(true);
-                //ren.reset();
-                ren.setHighlightUnsatisfiableClasses(true);
-                //ren.se
-                // TODO somehow make the size correct
-                Component comp = ren.getTableCellRendererComponent(table, item.getOWLAxiom(), isSelected, hasFocus,row,column);
-                
-                //comp.setPreferredSize(new Dimension(getColumnModel().getColumn(getColumnModel().getColumnIndex("OWL")).getWidth(),comp.getHeight()));
-                //comp.setMaximumSize(new Dimension(getColumnModel().getColumn(getColumnModel().getColumnIndex("OWL")).getWidth(),comp.getHeight()));
-                
-                return comp;
-            }
-            else {
-                return ren.getTableCellRendererComponent(table, value, isSelected, hasFocus,row,column);
-            }
+				WhatifConsequence item = ((WhatifConsequence) value);
+				ren.setOntology(o);
+				ren.setHighlightKeywords(true);
+				ren.setWrap(true);
+				// ren.reset();
+				ren.setHighlightUnsatisfiableClasses(true);
+				// ren.se
+				// TODO somehow make the size correct
+				Component comp = ren.getTableCellRendererComponent(table, item.getOWLAxiom(), isSelected, hasFocus, row,
+						column);
+
+				// comp.setPreferredSize(new
+				// Dimension(getColumnModel().getColumn(getColumnModel().getColumnIndex("OWL")).getWidth(),comp.getHeight()));
+				// comp.setMaximumSize(new
+				// Dimension(getColumnModel().getColumn(getColumnModel().getColumnIndex("OWL")).getWidth(),comp.getHeight()));
+
+				return comp;
+			} else {
+				return ren.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			}
 		}
-    }
-	
-	private void updateRowHeights()
-	{
-	    for (int row = 0; row < getRowCount(); row++)
-	    {
-	        int rowHeight = getRowHeight();
-
-	        for (int column = 0; column < getColumnCount(); column++)
-	        {
-	            Component comp = prepareRenderer(getCellRenderer(row, column), row, column);
-	            rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
-	        }
-
-	        setRowHeight(row, rowHeight);
-	    }
 	}
-	
+
+	private void updateRowHeights() {
+		for (int row = 0; row < getRowCount(); row++) {
+			int rowHeight = getRowHeight();
+
+			for (int column = 0; column < getColumnCount(); column++) {
+				Component comp = prepareRenderer(getCellRenderer(row, column), row, column);
+				rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
+			}
+
+			setRowHeight(row, rowHeight);
+		}
+	}
+
 	class GroupButtonEditor extends DefaultCellEditor {
 		protected JButton button;
 
@@ -538,9 +526,11 @@ public class WhatifAxiomTable extends JTable {
 							getRowSorter().toggleSortOrder(getColumnModel().getColumnIndex("OWL"));
 							getRowSorter().toggleSortOrder(getColumnModel().getColumnIndex("P"));
 							// getRowSorter().toggleSortOrder(0);
+
 							for (int i : tcm.getHiddenColumns()) {
 								tcm.hideColumn(i);
 							}
+							updateRowHeights();
 							isPushed = false;
 
 						}

@@ -160,7 +160,7 @@ public class WhatifExplanationDialog extends JPanel {
 		}
 
 		Explanation<OWLAxiom> smallest = null;
-		System.out.println(expl.size());
+		WhatifUtils.p(expl.size());
 		for (Explanation<OWLAxiom> ex : expl) {
 			if (smallest == null) {
 				smallest = ex;

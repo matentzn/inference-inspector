@@ -20,67 +20,67 @@ public class EntailmentGenerator {
 		Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
 		for (AxiomType type : types) {
 			if (type.equals(AxiomType.SUBCLASS_OF)) {
-				System.out.println("SUBCLASS_OF");
+				WhatifUtils.p("SUBCLASS_OF");
 				axioms.addAll(generateInferrences(r, o,
 						new InferredSubClassAxiomGenerator(true)));
 			}
 			else if (type.equals(AxiomType.SUB_OBJECT_PROPERTY)) {
-				System.out.println("SUB_OBJECT_PROPERTY");
+				WhatifUtils.p("SUB_OBJECT_PROPERTY");
 				axioms.addAll(generateInferrences(r, o,
 						new InferredSubObjectPropertyAxiomGenerator(true)));
 			}
 			else if (type.equals(AxiomType.SUB_DATA_PROPERTY)) {
-				System.out.println("SUB_DATA_PROPERTY");
+				WhatifUtils.p("SUB_DATA_PROPERTY");
 				axioms.addAll(generateInferrences(r, o,
 						new InferredSubDataPropertyAxiomGenerator(true)));
 			}
 			else if (type.equals(AxiomType.DISJOINT_CLASSES)) {
-				System.out.println("DISJOINT_CLASSES");
+				WhatifUtils.p("DISJOINT_CLASSES");
 				axioms.addAll(generateInferrences(r, o,
 						new InferredDisjointClassesAxiomGenerator(false)));
 			}
 			else if (type.equals(AxiomType.CLASS_ASSERTION)) {
-				System.out.println("CLASS_ASSERTION");
+				WhatifUtils.p("CLASS_ASSERTION");
 				axioms.addAll(generateInferrences(r, o,
 						new InferredClassAssertionAxiomGenerator(false)));
 			}
 			else if (type.equals(AxiomType.OBJECT_PROPERTY_ASSERTION)) {
-				System.out.println("OBJECT_PROPERTY_ASSERTION");
+				WhatifUtils.p("OBJECT_PROPERTY_ASSERTION");
 				axioms.addAll(generateInferrences(r, o,
 						new InferredObjectPropertyAssertionGenerator()));
 			}
 			else if (type.equals(AxiomType.DATA_PROPERTY_ASSERTION)) {
-				System.out.println("DATA_PROPERTY_ASSERTION");
+				WhatifUtils.p("DATA_PROPERTY_ASSERTION");
 				axioms.addAll(generateInferrences(r, o,
 						new InferredDataPropertyAssertionGenerator()));
 			}
 			else if (type.equals(AxiomType.INVERSE_OBJECT_PROPERTIES)) {
-				System.out.println("INVERSE_OBJECT_PROPERTIES");
+				WhatifUtils.p("INVERSE_OBJECT_PROPERTIES");
 				axioms.addAll(generateInferrences(r, o,
 						new InferredInverseObjectPropertiesAxiomGenerator()));
 			}
 			else if (type.equals(AxiomType.TRANSITIVE_OBJECT_PROPERTY)||type.equals(AxiomType.SYMMETRIC_OBJECT_PROPERTY)||type.equals(AxiomType.ASYMMETRIC_OBJECT_PROPERTY)||type.equals(AxiomType.FUNCTIONAL_OBJECT_PROPERTY)||type.equals(AxiomType.INVERSE_FUNCTIONAL_OBJECT_PROPERTY)||type.equals(AxiomType.REFLEXIVE_OBJECT_PROPERTY)||type.equals(AxiomType.IRREFLEXIVE_OBJECT_PROPERTY)) {
-				System.out.println("TRANSITIVE_OBJECT_PROPERTY");
+				WhatifUtils.p("TRANSITIVE_OBJECT_PROPERTY");
 				axioms.addAll(generateInferrences(r, o,
 						new InferredObjectPropertyCharacteristicAxiomGenerator()));
 			}
 			else if (type.equals(AxiomType.FUNCTIONAL_DATA_PROPERTY)) {
-				System.out.println("FUNCTIONAL_DATA_PROPERTY");
+				WhatifUtils.p("FUNCTIONAL_DATA_PROPERTY");
 				axioms.addAll(generateInferrences(r, o,
 						new InferredDataPropertyCharacteristicAxiomGenerator()));
 			}
 			else if (type.equals(AxiomType.EQUIVALENT_CLASSES)) {
-				System.out.println("EQUIVALENT_CLASSES");
+				WhatifUtils.p("EQUIVALENT_CLASSES");
 				axioms.addAll(generateInferrences(r, o,
 						new InferredEquivalentClassAxiomGenerator()));
 			}
 			else if (type.equals(AxiomType.EQUIVALENT_DATA_PROPERTIES)) {
-				System.out.println("EQUIVALENT_DATA_PROPERTIES");
+				WhatifUtils.p("EQUIVALENT_DATA_PROPERTIES");
 				axioms.addAll(generateInferrences(r, o,
 						new InferredEquivalentDataPropertiesAxiomGenerator()));
 			}
 			else if (type.equals(AxiomType.EQUIVALENT_OBJECT_PROPERTIES)) {
-				System.out.println("EQUIVALENT_OBJECT_PROPERTIES");
+				WhatifUtils.p("EQUIVALENT_OBJECT_PROPERTIES");
 				axioms.addAll(generateInferrences(r, o,
 						new InferredEquivalentObjectPropertyAxiomGenerator()));
 			}

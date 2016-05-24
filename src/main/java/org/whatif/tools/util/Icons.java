@@ -10,9 +10,7 @@ import javax.swing.ImageIcon;
 public class Icons {
 
 	public static Icon getIcon(String string) {
-		System.out.println("######");
 		URL cl = Icons.class.getClassLoader().getResource("/" + string);
-		System.out.println("######" + cl);
 		try {
 			Icon loadedIcon = new ImageIcon(cl);
 			return loadedIcon;

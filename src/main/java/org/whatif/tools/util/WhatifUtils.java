@@ -22,7 +22,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 public class WhatifUtils {
 	
 	public static void p(Object o) {
-		System.out.println(o);
+		//System.out.println(o);
 	}
 
 	public static Set<OWLEntity> getSignature(Set<OWLAxiom> axioms) {
