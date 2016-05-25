@@ -51,6 +51,9 @@ public class EventLogging {
 	}
 
 	public static String render(OWLAxiom owlAxiom) {
+		if (!prepared) {
+			return "";
+		}
 		return ren.render(owlAxiom);
 	}
 

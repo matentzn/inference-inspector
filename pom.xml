@@ -15,7 +15,7 @@
 	<packaging>bundle</packaging>
 
 	<name>Whatif Inference Inspector</name>
-	<description>Tool fo making consequences of modelling actions explicit.</description>
+	<description>Tool for making consequences of modelling actions explicit.</description>
 	<url>https://google.com</url>
 	<licenses>
 		<license>
@@ -29,9 +29,15 @@
 		<url>https://github.com/protegeproject/cellfie-plugin</url> <tag>HEAD</tag> 
 		</scm> -->
 	<dependencies>
+
 		<dependency>
 			<groupId>edu.stanford.protege</groupId>
 			<artifactId>protege-editor-owl</artifactId>
+			<version>5.0.0-RC2</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.stanford.protege</groupId>
+			<artifactId>protege-editor-core</artifactId>
 			<version>5.0.0-RC2</version>
 		</dependency>
 		<dependency>
@@ -55,20 +61,20 @@
 			<groupId>net.sourceforge.owlapi</groupId>
 			<artifactId>telemetry</artifactId>
 			<version>2.0.0</version>
-		</dependency> 
+		</dependency>
 	</dependencies>
 
 	<build>
-	<resources>
-        <!-- regular resource processsing for everything except logback.xml -->
-        <resource>
-            <directory>src/main/resources</directory>
-            <includes>
-                <include>**/*.png</include>
-                <include>**/*.xml</include>
-            </includes>
-        </resource>
-    </resources>
+		<resources>
+			<!-- regular resource processsing for everything except logback.xml -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.png</include>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -122,7 +128,10 @@
 							javax.*;resolution:=optional,
 							*
 						</Import-Package>
-						<Include-Resource>plugin.xml,src/main/resources/bin.png,src/main/resources/added.png,src/main/resources/history32.png,src/main/resources/options.png,src/main/resources/history.png,src/main/resources/diff.png,,src/main/resources/report.png,src/main/resources/warning_small.png,src/main/resources/warning.png,src/main/resources/whatif-tools-tab.layout.xml, {maven-dependencies}</Include-Resource>
+						<!-- <Include-Resource>plugin.xml,src/main/resources/bin.png,src/main/resources/added.png,src/main/resources/history32.png,src/main/resources/options.png,src/main/resources/history.png,src/main/resources/diff.png,,src/main/resources/report.png,src/main/resources/warning_small.png,src/main/resources/warning.png,src/main/resources/whatif-tools-tab.layout.xml,
+							{maven-dependencies}</Include-Resource> -->
+							<Include-Resource>plugin.xml,{maven-dependencies},{maven-resources}</Include-Resource>
+						<Export-Package>${project.artifactId}</Export-Package>
 					</instructions>
 					<executions>
 						<execution>

@@ -13,7 +13,7 @@
    
    <extension id="InferenceInspectorTab" point="org.protege.editor.core.application.WorkspaceTab">
 		<label value="Inference Inspector"/>
-		<class value="org.protege.editor.core.application.WorkspaceTab"/>
+		<class value="org.protege.editor.core.ui.workspace.WorkspaceViewsTab"/>
 		<index value="Y"/>
 		<editorKitId value="OWLEditorKit"/>
 		<defaultViewConfigFileName value="whatif-tools-tab.layout.xml"/>

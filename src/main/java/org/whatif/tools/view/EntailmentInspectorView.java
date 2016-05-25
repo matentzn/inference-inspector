@@ -70,6 +70,7 @@ import org.apache.log4j.Logger;
 import org.protege.editor.core.ProtegeApplication;
 import org.protege.editor.core.ProtegeManager;
 import org.protege.editor.core.ui.workspace.WorkspaceFrame;
+import org.protege.editor.core.ui.workspace.WorkspaceTab;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
@@ -153,6 +154,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 	private JProgressBar progressBar = new JProgressBar(0, 100);
 	private Task task;
 	private JLabel taskOutput = new JLabel("Progress..");
+	private WorkspaceTab fake = null;
 
 	List<ReasonerRunDiff> history_diffs = new ArrayList<ReasonerRunDiff>();
 	Map<Class<? extends ProfileAxiomPattern>, OWLProfileReport> current_profile_reports = new HashMap<Class<? extends ProfileAxiomPattern>, OWLProfileReport>();
@@ -163,7 +165,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 	ReasonerRunDiff selected_history_point = null;
 
 	private OWLModelManagerListener owlModelManagerListener;
-
+	
 	JPanel panel_top = null;
 	JPanel panel_center = null;
 	JPanel panel_inferenceinspector = null;
@@ -284,7 +286,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent
 	@Override
 	public void initialiseView() throws Exception {
 		setLayout(new BorderLayout());
-		EventLogging.prepare(new File("output_wii.txt"));
+		//EventLogging.prepare(new File("output_wii.txt"));
 		getOWLModelManager().addOntologyChangeListener(this);
 		getOWLWorkspace().getOWLSelectionModel().addListener(this);
 		// GridBagConstraints c = createInitialGridBagConstraints();
