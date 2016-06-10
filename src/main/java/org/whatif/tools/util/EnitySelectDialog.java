@@ -20,8 +20,11 @@ import java.awt.event.*;
  
 /* 1.4 example used by DialogDemo.java. */
 public class EnitySelectDialog extends JDialog {
-    private Set<OWLEntity> entities;
-    private OWLEntitySelectorPanel selectentity;   
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 98298723989898L;
+	private OWLEntitySelectorPanel selectentity;   
     private final JComponent dd;
     private JButton bt_done = new JButton("Done");
  
@@ -65,7 +68,6 @@ public class EnitySelectDialog extends JDialog {
 				clearAndHide();
 				if(dd instanceof EntailmentInspectorView) {
 					((EntailmentInspectorView)dd).updateEntitySelectTA();
-					((EntailmentInspectorView)dd).updateView();
 				}
 			}
 		});

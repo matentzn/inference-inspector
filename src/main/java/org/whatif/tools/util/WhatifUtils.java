@@ -11,6 +11,7 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
@@ -22,9 +23,51 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 public class WhatifUtils {
 	
 	public static void p(Object o) {
-		//System.out.println(o);
+		System.out.println(o);
+	}
+	
+	public static OWLEntity getPrimaryEntityOfAxiom(OWLAxiom ax) {
+		if (ax instanceof OWLEquivalentClassesAxiom) {
+			OWLEquivalentClassesAxiom axe = (OWLEquivalentClassesAxiom) ax;
+			for (OWLClassExpression a : axe.getClassExpressions()) {
+				if (a.isClassExpressionLiteral()) {
+					return (OWLClass) a;
+				}
+			}
+
+		} else if (ax instanceof OWLSubClassOfAxiom) {
+			OWLSubClassOfAxiom axe = (OWLSubClassOfAxiom) ax;
+			for (OWLClassExpression a : axe.getSubClass().getNestedClassExpressions()) {
+				if (a.isClassExpressionLiteral()) {
+					return (OWLClass) a;
+				}
+			}
+		} else {
+			// TODO
+			for (OWLEntity a : ax.getClassesInSignature()) {
+				return a;
+			}
+			for (OWLEntity a : ax.getObjectPropertiesInSignature()) {
+				return a;
+			}
+			for (OWLEntity a : ax.getDataPropertiesInSignature()) {
+				return a;
+			}
+			for (OWLEntity a : ax.getIndividualsInSignature()) {
+				return a;
+			}
+		}
+		return null;
 	}
 
+	public void sleep() {
+		try {
+			Thread.sleep(25);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static Set<OWLEntity> getSignature(Set<OWLAxiom> axioms) {
 		Set<OWLEntity> signature = new HashSet<OWLEntity>();
 		for(OWLAxiom ax:axioms) {

@@ -24,6 +24,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
@@ -124,132 +125,136 @@ public class WhatifAxiomTable extends JTable {
 			return super.getColumnModel();
 		}
 	}
+	
+	public class SetAxiomTask extends SwingWorker<Void, Void> {
+		
+		Map<WhatifConsequence, AxiomPriority> axiomsin;
+		Object[][] data;
 
-	public void setAxioms(final Map<WhatifConsequence, AxiomPriority> axiomsin) {
-		Runnable update = new Runnable() {
-			public void run() {
-				// Update the model here
+		public SetAxiomTask(Map<WhatifConsequence, AxiomPriority> axiomsin) {
+			this.axiomsin = axiomsin;
+		}
 
-				dm.setRowCount(0);
-				/// System.out.println("THISTHISTHIS:" + getThis());
-				List<Object[]> rows = new ArrayList<Object[]>();
+		@Override
+		protected Void doInBackground() throws Exception {
+			dm.setRowCount(0);
+			/// System.out.println("THISTHISTHIS:" + getThis());
+			List<Object[]> rows = new ArrayList<Object[]>();
 
-				// Map<WhatifConsequence, AxiomPriority> axioms = new
-				// HashMap<WhatifConsequence, AxiomPriority>();
-				grouping.clear();
-				for (WhatifConsequence key : axiomsin.keySet()) {
-					if (key.getOWLAxiom() instanceof OWLClassAssertionAxiom) {
-						OWLClassAssertionAxiom ca = (OWLClassAssertionAxiom) key.getOWLAxiom();
-						AxiomPriority p = axiomsin.get(key);
-						AxiomPattern pat = key.getHighestPriorityAxiomPattern();
-						if (!grouping.containsKey(p)) {
-							grouping.put(p,
-									new HashMap<AxiomPattern, Map<WhatifConsequence, Set<WhatifConsequence>>>());
-						}
-						if (!grouping.get(p).containsKey(pat)) {
-							grouping.get(p).put(pat, new HashMap<WhatifConsequence, Set<WhatifConsequence>>());
-						}
-						boolean ingrouping = false;
-						for (WhatifConsequence con : grouping.get(p).get(pat).keySet()) {
-							if (con.getOWLAxiom() instanceof OWLClassAssertionAxiom) {
-								OWLClassAssertionAxiom conca = (OWLClassAssertionAxiom) con.getOWLAxiom();
-								if (conca.getClassExpression().equals(ca.getClassExpression())) {
-									grouping.get(p).get(pat).get(con).add(key);
-									ingrouping = true;
-								}
+			// Map<WhatifConsequence, AxiomPriority> axioms = new
+			// HashMap<WhatifConsequence, AxiomPriority>();
+			grouping.clear();
+			for (WhatifConsequence key : axiomsin.keySet()) {
+				if (key.getOWLAxiom() instanceof OWLClassAssertionAxiom) {
+					OWLClassAssertionAxiom ca = (OWLClassAssertionAxiom) key.getOWLAxiom();
+					AxiomPriority p = axiomsin.get(key);
+					AxiomPattern pat = key.getHighestPriorityAxiomPattern();
+					if (!grouping.containsKey(p)) {
+						grouping.put(p, new HashMap<AxiomPattern, Map<WhatifConsequence, Set<WhatifConsequence>>>());
+					}
+					if (!grouping.get(p).containsKey(pat)) {
+						grouping.get(p).put(pat, new HashMap<WhatifConsequence, Set<WhatifConsequence>>());
+					}
+					boolean ingrouping = false;
+					for (WhatifConsequence con : grouping.get(p).get(pat).keySet()) {
+						if (con.getOWLAxiom() instanceof OWLClassAssertionAxiom) {
+							OWLClassAssertionAxiom conca = (OWLClassAssertionAxiom) con.getOWLAxiom();
+							if (conca.getClassExpression().equals(ca.getClassExpression())) {
+								grouping.get(p).get(pat).get(con).add(key);
+								ingrouping = true;
 							}
-						}
-						if (!ingrouping) {
-							grouping.get(p).get(pat).put(key, new HashSet<WhatifConsequence>());
-							Object[] row = new Object[] { axiomsin.get(key), key, key.getConsequenceType(), "?", ">" };
-							rows.add(row);
-						}
-					} else if (key.getOWLAxiom() instanceof OWLObjectPropertyAssertionAxiom) {
-						OWLObjectPropertyAssertionAxiom ca = (OWLObjectPropertyAssertionAxiom) key.getOWLAxiom();
-						AxiomPriority p = axiomsin.get(key);
-						AxiomPattern pat = key.getHighestPriorityAxiomPattern();
-						if (!grouping.containsKey(p)) {
-							grouping.put(p,
-									new HashMap<AxiomPattern, Map<WhatifConsequence, Set<WhatifConsequence>>>());
-						}
-						if (!grouping.get(p).containsKey(pat)) {
-							grouping.get(p).put(pat, new HashMap<WhatifConsequence, Set<WhatifConsequence>>());
-						}
-						boolean ingrouping = false;
-						for (WhatifConsequence con : grouping.get(p).get(pat).keySet()) {
-							if (con.getOWLAxiom() instanceof OWLObjectPropertyAssertionAxiom) {
-								OWLObjectPropertyAssertionAxiom conca = (OWLObjectPropertyAssertionAxiom) con
-										.getOWLAxiom();
-								if (conca.getProperty().equals(ca.getProperty())) {
-									grouping.get(p).get(pat).get(con).add(key);
-									ingrouping = true;
-								}
-							}
-						}
-						if (!ingrouping) {
-							grouping.get(p).get(pat).put(key, new HashSet<WhatifConsequence>());
-							Object[] row = new Object[] { axiomsin.get(key), key, key.getConsequenceType(), "?", ">" };
-							rows.add(row);
 						}
 					}
-
-					else {
-						Object[] row = new Object[] { axiomsin.get(key), key, key.getConsequenceType(), "?", "" };
+					if (!ingrouping) {
+						grouping.get(p).get(pat).put(key, new HashSet<WhatifConsequence>());
+						Object[] row = new Object[] { axiomsin.get(key), key, key.getConsequenceType(), "?", ">" };
+						rows.add(row);
+					}
+				} else if (key.getOWLAxiom() instanceof OWLObjectPropertyAssertionAxiom) {
+					OWLObjectPropertyAssertionAxiom ca = (OWLObjectPropertyAssertionAxiom) key.getOWLAxiom();
+					AxiomPriority p = axiomsin.get(key);
+					AxiomPattern pat = key.getHighestPriorityAxiomPattern();
+					if (!grouping.containsKey(p)) {
+						grouping.put(p, new HashMap<AxiomPattern, Map<WhatifConsequence, Set<WhatifConsequence>>>());
+					}
+					if (!grouping.get(p).containsKey(pat)) {
+						grouping.get(p).put(pat, new HashMap<WhatifConsequence, Set<WhatifConsequence>>());
+					}
+					boolean ingrouping = false;
+					for (WhatifConsequence con : grouping.get(p).get(pat).keySet()) {
+						if (con.getOWLAxiom() instanceof OWLObjectPropertyAssertionAxiom) {
+							OWLObjectPropertyAssertionAxiom conca = (OWLObjectPropertyAssertionAxiom) con.getOWLAxiom();
+							if (conca.getProperty().equals(ca.getProperty())) {
+								grouping.get(p).get(pat).get(con).add(key);
+								ingrouping = true;
+							}
+						}
+					}
+					if (!ingrouping) {
+						grouping.get(p).get(pat).put(key, new HashSet<WhatifConsequence>());
+						Object[] row = new Object[] { axiomsin.get(key), key, key.getConsequenceType(), "?", ">" };
 						rows.add(row);
 					}
 				}
 
-				Object[][] data = (Object[][]) rows.toArray(new Object[rows.size()][]);
-				dm.setDataVector(data, columns);
-
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("Info"))
-						.setCellRenderer(new ButtonRenderer());
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("Info"))
-						.setCellEditor(new ButtonEditor(new JCheckBox()));
-
-				// getColumnModel().getColumn(getColumnModel().getColumnIndex("G")).setCellRenderer(new
-				// ButtonRenderer());
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("G"))
-						.setCellEditor(new GroupButtonEditor(new JCheckBox()));
-
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("P")).setCellRenderer(new ColorRenderer());
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("Type"))
-						.setCellRenderer(new LineWrapCellRenderer());
-
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("OWL"))
-						.setCellRenderer(new AxiomListItemRenderer());
-				// .setCellRenderer(new AxiomAreaRenderer());
-				// setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("P")).setMinWidth(20);
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("P")).setMaxWidth(30);
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("Type")).setMinWidth(100);
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("Type")).setMaxWidth(100);
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("Info")).setMinWidth(45);
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("Info")).setMaxWidth(45);
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("G")).setMinWidth(25);
-				getColumnModel().getColumn(getColumnModel().getColumnIndex("G")).setMaxWidth(25);
-				// getColumnModel().getColumn(0).setResizable(false);
-				// getColumnModel().getColumn(1).setPreferredWidth(70);
-				// getColumnModel().getColumn(2).setResizable(false);
-				// getColumnModel().getColumn(3).setResizable(false);
-				getRowSorter().toggleSortOrder(getColumnModel().getColumnIndex("OWL"));
-				getRowSorter().toggleSortOrder(getColumnModel().getColumnIndex("P"));
-				// getRowSorter().toggleSortOrder(0);
-				for (int i : tcm.getHiddenColumns()) {
-					tcm.hideColumn(i);
+				else {
+					Object[] row = new Object[] { axiomsin.get(key), key, key.getConsequenceType(), "?", "" };
+					rows.add(row);
 				}
-
-				// updateRowHeights();
-
-				// setFont(new Font("Serif", Font.BOLD, currentfontsize));
-				updateRowHeights();
-				repaint();
-				
-
 			}
-		};
-		SwingUtilities.invokeLater(update);
+			
+			data = (Object[][]) rows.toArray(new Object[rows.size()][]);			
+			return null;
+		}
+		
+		@Override
+		public void done() {
+			
+			dm.setDataVector(data, columns);
+
+			getColumnModel().getColumn(getColumnModel().getColumnIndex("Info")).setCellRenderer(new ButtonRenderer());
+			getColumnModel().getColumn(getColumnModel().getColumnIndex("Info"))
+					.setCellEditor(new ButtonEditor(new JCheckBox()));
+
+			// getColumnModel().getColumn(getColumnModel().getColumnIndex("G")).setCellRenderer(new
+			// ButtonRenderer());
+			getColumnModel().getColumn(getColumnModel().getColumnIndex("G"))
+					.setCellEditor(new GroupButtonEditor(new JCheckBox()));
+
+			getColumnModel().getColumn(getColumnModel().getColumnIndex("P")).setCellRenderer(new ColorRenderer());
+			getColumnModel().getColumn(getColumnModel().getColumnIndex("Type")).setCellRenderer(new LineWrapCellRenderer());
+
+			getColumnModel().getColumn(getColumnModel().getColumnIndex("OWL")).setCellRenderer(new AxiomListItemRenderer());
+			// .setCellRenderer(new AxiomAreaRenderer());
+			// setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+			getColumnModel().getColumn(getColumnModel().getColumnIndex("P")).setMinWidth(20);
+			getColumnModel().getColumn(getColumnModel().getColumnIndex("P")).setMaxWidth(30);
+			getColumnModel().getColumn(getColumnModel().getColumnIndex("Type")).setMinWidth(100);
+			getColumnModel().getColumn(getColumnModel().getColumnIndex("Type")).setMaxWidth(100);
+			getColumnModel().getColumn(getColumnModel().getColumnIndex("Info")).setMinWidth(45);
+			getColumnModel().getColumn(getColumnModel().getColumnIndex("Info")).setMaxWidth(45);
+			getColumnModel().getColumn(getColumnModel().getColumnIndex("G")).setMinWidth(25);
+			getColumnModel().getColumn(getColumnModel().getColumnIndex("G")).setMaxWidth(25);
+			// getColumnModel().getColumn(0).setResizable(false);
+			// getColumnModel().getColumn(1).setPreferredWidth(70);
+			// getColumnModel().getColumn(2).setResizable(false);
+			// getColumnModel().getColumn(3).setResizable(false);
+			getRowSorter().toggleSortOrder(getColumnModel().getColumnIndex("OWL"));
+			getRowSorter().toggleSortOrder(getColumnModel().getColumnIndex("P"));
+			// getRowSorter().toggleSortOrder(0);
+			for (int i : tcm.getHiddenColumns()) {
+				tcm.hideColumn(i);
+			}
+			revalidate();
+			repaint();
+			updateRowHeights();
+		}
+	}
+
+	public void setAxioms(Map<WhatifConsequence, AxiomPriority> axiomsin) {
+		SetAxiomTask setAxioms = new SetAxiomTask(axiomsin);
+		setAxioms.execute();
 	}
 
 	@Override
@@ -282,6 +287,7 @@ public class WhatifAxiomTable extends JTable {
 	public void tableChanged(TableModelEvent e) {
 		super.tableChanged(e);
 		// updateRowHeights();
+		revalidate();
 		repaint();
 	}
 
@@ -451,7 +457,7 @@ public class WhatifAxiomTable extends JTable {
 		}
 	}
 
-	private void updateRowHeights() {
+	public void updateRowHeights() {
 		for (int row = 0; row < getRowCount(); row++) {
 			int rowHeight = getRowHeight();
 
@@ -530,7 +536,7 @@ public class WhatifAxiomTable extends JTable {
 							for (int i : tcm.getHiddenColumns()) {
 								tcm.hideColumn(i);
 							}
-							updateRowHeights();
+							// updateRowHeights();
 							isPushed = false;
 
 						}
@@ -625,7 +631,7 @@ public class WhatifAxiomTable extends JTable {
 				if (con instanceof WhatifInferenceConsequence) {
 					EventLogging.saveEvent(System.currentTimeMillis(), "table:" + WhatifAxiomTable.this.name,
 							"click_consequence", EventLogging.render(con.getOWLAxiom()), "wii");
-					OWLEntity ent = EntailmentInspectorView
+					OWLEntity ent = WhatifUtils
 							.getPrimaryEntityOfAxiom(((WhatifInferenceConsequence) con).getOWLAxiom());
 					getOWLSelectionModel().setSelectedEntity(ent);
 				}
@@ -634,7 +640,13 @@ public class WhatifAxiomTable extends JTable {
 	}
 
 	public void sortColumn(String string) {
-		getRowSorter().toggleSortOrder(getColumnModel().getColumnIndex(string));
-		repaint();
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				getRowSorter().toggleSortOrder(getColumnModel().getColumnIndex(string));
+			}
+		});
+		
 	}
 }
