@@ -18,6 +18,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -108,6 +109,7 @@ public class WhatifAxiomTable extends JTable {
 		tcm.hideColumn("Type");
 		createMouseListener();
 		dlg = new WhatifExplanationDialog(owlModelManager, pvp, this);
+		
 	}
 
 	protected OWLSelectionModel getOWLSelectionModel() {
@@ -366,7 +368,8 @@ public class WhatifAxiomTable extends JTable {
 		public ButtonEditor(JCheckBox checkBox) {
 			super(checkBox);
 			button = new JButton();
-			button.setOpaque(true);
+			//button.setOpaque(true);
+			button.setContentAreaFilled(true);
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					EventLogging.saveEvent(System.currentTimeMillis(), "table:" + WhatifAxiomTable.this.name,
@@ -395,7 +398,18 @@ public class WhatifAxiomTable extends JTable {
 		public Object getCellEditorValue() {
 			if (isPushed) {
 				dlg.reset(con);
-				JOptionPane.showMessageDialog(button, dlg);
+				//JOptionPane.showMessageDialog(button, dlg);
+				JOptionPane optionPane = new JOptionPane();
+		        optionPane.setMessage(dlg);
+		        //optionPane.setOptionType(JOptionPane.OK_OPTION);
+		        //optionPane.setMessageType(JOptionPane.ERROR_MESSAGE);
+		        //JDialog.setDefaultLookAndFeelDecorated(true);
+		        JDialog dialog = new JDialog(SwingUtilities.getWindowAncestor(WhatifAxiomTable.this), "Information");
+		        dialog.setModal(false);
+		        dialog.add(dlg);
+		        dialog.setLocationRelativeTo(button);
+		        dialog.setSize(400, 300);
+		        dialog.setVisible(true);
 			}
 			isPushed = false;
 			return new String(label);
@@ -536,7 +550,13 @@ public class WhatifAxiomTable extends JTable {
 							for (int i : tcm.getHiddenColumns()) {
 								tcm.hideColumn(i);
 							}
-							// updateRowHeights();
+							SwingUtilities.invokeLater(new Runnable() {
+								
+								@Override
+								public void run() {
+									updateRowHeights();
+								}
+							});
 							isPushed = false;
 
 						}

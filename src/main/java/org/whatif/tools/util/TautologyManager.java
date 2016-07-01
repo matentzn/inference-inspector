@@ -7,9 +7,11 @@ import java.util.Set;
 
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
+import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.whatif.tools.consequence.WhatifInferenceConsequence;
 
@@ -18,11 +20,14 @@ public class TautologyManager {
 	final private Set<WhatifInferenceConsequence> tautologies = new HashSet<WhatifInferenceConsequence>();
 	final private Set<WhatifInferenceConsequence> non_tautologies = new HashSet<WhatifInferenceConsequence>();
 	final private OWLReasoner r;
+	final private OWLDataFactory df;
 	
 	final Map<AxiomType,Integer> failures = new HashMap<AxiomType,Integer>();
 
 	public TautologyManager(OWLReasoner r) {
 		this.r = r;
+		this.df = r.getRootOntology().getOWLOntologyManager().getOWLDataFactory();
+		WhatifUtils.e("Implemeted simple tautology check for subclass.");
 	}
 
 	public void checkAxioms(Set<WhatifInferenceConsequence> axioms) {
@@ -32,7 +37,7 @@ public class TautologyManager {
 	}
 
 	public boolean isTautology(WhatifInferenceConsequence ax) {
-		if (isKnownTautology(ax)) {
+		if (tautologies.contains(ax) || non_tautologies.contains(ax)) {
 			return tautologies.contains(ax);
 		} else {
 			if (isTautology(ax.getOWLAxiom())) {
@@ -43,13 +48,6 @@ public class TautologyManager {
 				return false;
 			}
 		}
-	}
-
-	private boolean isKnownTautology(WhatifInferenceConsequence ax) {
-		if (tautologies.contains(ax) || non_tautologies.contains(ax)) {
-			return true;
-		}
-		return false;
 	}
 
 	public boolean isTautology(OWLAxiom ax) {
@@ -72,7 +70,18 @@ public class TautologyManager {
 			if(eax.getProperties().size()<=1) {
 				return true;
 			}
-		} else if (failures.containsKey(ax.getAxiomType())) {
+		}	else if (ax instanceof OWLSubClassOfAxiom) {
+			OWLSubClassOfAxiom eax = (OWLSubClassOfAxiom)ax;
+			if(eax.getSuperClass().equals(df.getOWLThing())) {
+				return true;
+			} else if(eax.getSuperClass().equals(eax.getSubClass())) {
+				return true;
+			} else {
+				
+				return false;
+			}
+		}
+		else if (failures.containsKey(ax.getAxiomType())) {
 			if (failures.get(ax.getAxiomType())>10) {
 				return false;
 			}

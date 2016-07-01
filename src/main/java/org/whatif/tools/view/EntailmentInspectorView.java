@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -343,7 +344,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 	@Override
 	public void initialiseView() throws Exception {
 		setLayout(new BorderLayout());
-		// EventLogging.prepare(new File("output_wii.txt"));
+		EventLogging.prepare(new File("_output_wii_"+System.currentTimeMillis()+".csv"));
 		getOWLModelManager().addOntologyChangeListener(this);
 		getOWLWorkspace().getOWLSelectionModel().addListener(this);
 		// GridBagConstraints c = createInitialGridBagConstraints();
@@ -1610,15 +1611,8 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 				if (prio == AxiomPriority.REMOVE) {
 					continue;
 				}
-				try {
-					if (p.matchesPattern(axenew,
-							getOWLModelManager().getOWLReasonerManager().getCurrentReasonerFactory()
-									.getReasonerFactory()
-									.createReasoner(OWLManager.createOWLOntologyManager().createOntology()))) {
-						matches.add(p);
-					}
-				} catch (OWLOntologyCreationException e) {
-					e.printStackTrace();
+				if (p.matchesPattern(axenew, tautologytracker)) {
+					matches.add(p);
 				}
 				tautology += (System.currentTimeMillis() - st);
 			} else if (p instanceof AssertedAxiomPattern) {

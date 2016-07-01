@@ -18,11 +18,7 @@ public class TautologyAxiomPattern implements AxiomPattern {
 		if(!(o instanceof OWLReasoner)) {
 			return false;
 		}
-		OWLReasoner r = (OWLReasoner)o;
-		if(!OWLOntologyAxiomSelector.getLogicalAxiomsInClosure(r.getRootOntology()).isEmpty()) {
-			return false;
-		}
-		TautologyManager tm = new TautologyManager(r);
+		TautologyManager tm = (TautologyManager)o;
 		return tm.isTautology(ax);
 	}
 	

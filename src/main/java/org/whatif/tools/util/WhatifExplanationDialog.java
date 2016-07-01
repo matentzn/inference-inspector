@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -48,12 +49,11 @@ import org.whatif.tools.consequence.WhatifConsequence;
 import org.whatif.tools.consequence.WhatifInferenceConsequence;
 import org.whatif.tools.view.EntailmentInspectorView;
 
-
 public class WhatifExplanationDialog extends JPanel {
 
 	WhatifConsequence ax = null;
 	JPanel p = null;
-	JButton bt_delete = new JButton("<html><center>" + "Delete" + "<br>" + "selected" + "</center></html>");
+	JButton bt_delete = new JButton("<html><center>" + "Delete selected" + "<br>" + "and finish" + "</center></html>");
 	JButton bt_alljust = new JButton("<html><center>" + "More" + "<br>" + "explanations" + "</center></html>");
 	JList<CheckboxListItem> list = new JList<CheckboxListItem>();
 	OWLModelManager owlModelManager;
@@ -77,16 +77,21 @@ public class WhatifExplanationDialog extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				List<CheckboxListItem> items = list.getSelectedValuesList();
+				boolean deleted = false;
 				for (CheckboxListItem i : items) {
+					if (!deleted)
+						deleted = true;
 					owlModelManager.applyChange(new RemoveAxiom(owlModelManager.getActiveOntology(), i.getAxiom()));
 				}
-				 java.awt.Window w = SwingUtilities.getWindowAncestor((JButton) e.getSource());
+				java.awt.Window w = SwingUtilities.getWindowAncestor((JButton) e.getSource());
 
-				    if (w != null) {
-				      w.setVisible(false);
-				   }
-				JOptionPane.showMessageDialog((JButton) e.getSource(),
-						"Axioms deleted... Please run the reasoner again!");
+				if (w != null) {
+					w.setVisible(false);
+				}
+				if (deleted) {
+					JOptionPane.showMessageDialog((JButton) e.getSource(),
+							"Axioms deleted... Please run the reasoner again!");
+				}
 			}
 		});
 
@@ -102,7 +107,7 @@ public class WhatifExplanationDialog extends JPanel {
 
 		bt_alljust.setPreferredSize(new Dimension(80, 20));
 		bt_alljust.setMaximumSize(new Dimension(80, 20));
-		
+
 		add(p);
 	}
 
@@ -110,7 +115,7 @@ public class WhatifExplanationDialog extends JPanel {
 
 		p.removeAll();
 		bt_alljust.removeMouseListener(ml);
-		StringBuilder sb = new StringBuilder();	
+		StringBuilder sb = new StringBuilder();
 
 		if (con instanceof WhatifInferenceConsequence) {
 			prepareLogicalExplanationDialog(con, sb);
@@ -118,14 +123,14 @@ public class WhatifExplanationDialog extends JPanel {
 			JTextArea expl = new JTextArea();
 			ax = con;
 			AxiomPattern pa = con.getHighestPriorityAxiomPattern();
-			if(pa instanceof ProfileAxiomPattern) {
+			if (pa instanceof ProfileAxiomPattern) {
 				WhatifUtils.p("ProfileAxiomPatternProfileAxiomPattern");
-				Collection<OWLProfileViolation> vios = pvp.getViolations(((ProfileAxiomPattern)pa).getClass());
-				WhatifUtils.p("Size:"+vios.size());
-				for(OWLProfileViolation vio:vios) {
-					if(vio.getAxiom().equals(ax.getOWLAxiom())) {
-						sb.append(pa.toString()+" \n"+"\n");
-						sb.append(vio.getClass().getSimpleName().replaceAll("(\\p{Ll})(\\p{Lu})","$1 $2")+": \n");
+				Collection<OWLProfileViolation> vios = pvp.getViolations(((ProfileAxiomPattern) pa).getClass());
+				WhatifUtils.p("Size:" + vios.size());
+				for (OWLProfileViolation vio : vios) {
+					if (vio.getAxiom().equals(ax.getOWLAxiom())) {
+						sb.append(pa.toString() + " \n" + "\n");
+						sb.append(vio.getClass().getSimpleName().replaceAll("(\\p{Ll})(\\p{Lu})", "$1 $2") + ": \n");
 						sb.append(EntailmentInspectorView.getRenderer().render(ax.getOWLAxiom()));
 						break;
 					}
@@ -136,26 +141,28 @@ public class WhatifExplanationDialog extends JPanel {
 			expl.setLineWrap(true);
 			expl.setAutoscrolls(true);
 			JScrollPane scroll = new JScrollPane(expl);
-			scroll.setPreferredSize(new Dimension(200,100));
+			scroll.setPreferredSize(new Dimension(200, 100));
 			p.add(scroll, BorderLayout.CENTER);
+			EventLogging.saveEvent(System.currentTimeMillis(), "explanation computed",
+					"click_explanation_computed", EventLogging.render(con.getOWLAxiom()), "wii");
 			
 		}
 	}
 
 	private void prepareLogicalExplanationDialog(WhatifConsequence con, StringBuilder sb) {
 		JLabel explanationlabel = new JLabel();
+		explanationlabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		ax = (WhatifInferenceConsequence) con;
 		Set<Explanation<OWLAxiom>> expl = new HashSet<Explanation<OWLAxiom>>();
 		boolean consistent = owlModelManager.getOWLReasonerManager().getCurrentReasoner().isConsistent();
-		try{
-			if(consistent) {
+		try {
+			if (consistent) {
 				expl.addAll(EntailmentInspectorView.getExplanationGenerator().getExplanations(ax.getOWLAxiom(), 5));
+			} else {
+				expl.addAll(EntailmentInspectorView.getInconsistentExplanationGenerator()
+						.getExplanations(ax.getOWLAxiom(), 5));
 			}
-			else {
-				expl.addAll(EntailmentInspectorView.getInconsistentExplanationGenerator().getExplanations(ax.getOWLAxiom(), 5));
-			}
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -191,8 +198,7 @@ public class WhatifExplanationDialog extends JPanel {
 					em.reload();
 					Collection<ExplanationService> teachers = em.getTeachers(ax.getOWLAxiom());
 					if (!teachers.isEmpty()) {
-						final ExplanationDialog explanation = new ExplanationDialog(
-								em, ax.getOWLAxiom());
+						final ExplanationDialog explanation = new ExplanationDialog(em, ax.getOWLAxiom());
 						JOptionPane op = new JOptionPane(explanation, JOptionPane.PLAIN_MESSAGE,
 								JOptionPane.DEFAULT_OPTION);
 						JDialog dlg = op.createDialog(p, "All Explanations");
@@ -213,8 +219,8 @@ public class WhatifExplanationDialog extends JPanel {
 			};
 
 			bt_alljust.addMouseListener(ml);
-			
-			if(!consistent) {
+
+			if (!consistent) {
 				sb.append("The ontology is inconsistent! ");
 			}
 
@@ -227,10 +233,10 @@ public class WhatifExplanationDialog extends JPanel {
 				OWLEquivalentClassesAxiom sax = (OWLEquivalentClassesAxiom) ax.getOWLAxiom();
 				sb.append("That ");
 				for (OWLClassExpression e : sax.getClassExpressionsAsList()) {
-					sb.append(render(e) + ", ");
+					sb.append(render(e) + " and ");
 				}
 				if (sb.length() > 0) {
-					sb.setLength(sb.length() - 2);
+					sb.setLength(sb.length() - 5);
 				}
 				sb.append(" are equivalent follows from:");
 			} else {
@@ -238,12 +244,12 @@ public class WhatifExplanationDialog extends JPanel {
 			}
 		}
 		explanationlabel.setText(sb.toString());
-		
+		list.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		p.add(explanationlabel, BorderLayout.NORTH);
 		p.add(list, BorderLayout.CENTER);
 		// p.add(Box.createRigidArea(new Dimension(10, 0)));
 		// list.setAlignmentX(Component.LEFT_ALIGNMENT);
-		
+
 		JPanel p2 = new JPanel(new GridLayout(1, 2));
 		p.add(p2, BorderLayout.SOUTH);
 		p2.add(bt_delete);
