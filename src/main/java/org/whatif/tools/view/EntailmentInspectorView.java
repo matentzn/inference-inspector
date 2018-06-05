@@ -1170,6 +1170,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 			reportManager.addReport(ViolatesOWLDLAxiomPattern.class, r1);
 			setProgress(5);
 
+			/*
 			OWLProfileReport r2 = new OWL2ELProfile().checkOntology(getO());
 			reportManager.addReport(ViolatesOWLELAxiomPattern.class, r2);
 
@@ -1180,6 +1181,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 			setProgress(15);
 			OWLProfileReport r4 =  new OWL2QLProfile().checkOntology(getO());
 			reportManager.addReport(ViolatesOWLQLAxiomPattern.class, r4);
+			*/
 		}
 
 		private void updateInferrences() {
