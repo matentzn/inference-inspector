@@ -338,14 +338,14 @@ public class WhatifAxiomTable extends JTable {
 			if (value.toString() == "") {
 				return new JLabel("");
 			}
-			if (isSelected) {
+			/*if (isSelected) {
 				setForeground(table.getSelectionForeground());
 				setBackground(table.getSelectionBackground());
 			} else {
 				setForeground(table.getForeground());
-				setBackground(table.getSelectionBackground());
+				setBackground(table.getBackground());
 				// setBackground(UIManager.getColor("Button.background"));
-			}
+			}*/
 			setText((value == null) ? "" : value.toString());
 
 			return this;

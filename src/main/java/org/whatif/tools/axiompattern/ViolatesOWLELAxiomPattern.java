@@ -7,6 +7,7 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.profiles.OWL2DLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfileReport;
 import org.semanticweb.owlapi.profiles.OWLProfileViolation;
+import org.whatif.tools.util.WhatifUtils;
 
 public class ViolatesOWLELAxiomPattern implements AxiomPattern, ProfileAxiomPattern {
 
@@ -18,17 +19,12 @@ public class ViolatesOWLELAxiomPattern implements AxiomPattern, ProfileAxiomPatt
 		if (!(o instanceof OWLProfileReport)) {
 			return false;
 		}
-
-		// Unfortunately I have to generate the Report from the outside, to
-		// avoid having to redo it for every call.
-		OWLProfileReport prof = (OWLProfileReport) o;
-		List<OWLProfileViolation> l = prof.getViolations();
-		for (OWLProfileViolation vo : l) {
-			if (vo.getAxiom().equals(ax)) {
-				return true;
+		for (OWLProfileViolation vo : ((OWLProfileReport) o).getViolations()) {
+			try {
+				return vo.getAxiom().equals(ax);
+			} catch (Exception e) {
 			}
 		}
-
 		return false;
 	}
 

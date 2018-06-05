@@ -1,66 +1,9 @@
 package org.whatif.tools.view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.ComponentOrientation;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
-import javax.swing.DefaultListSelectionModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.JToggleButton;
-import javax.swing.ListModel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
-
 import org.apache.log4j.Logger;
 import org.protege.editor.core.ProtegeManager;
 import org.protege.editor.core.ui.workspace.WorkspaceFrame;
 import org.protege.editor.owl.model.event.EventType;
-import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.model.inference.ReasonerStatus;
 import org.protege.editor.owl.model.selection.OWLSelectionModelListener;
@@ -73,56 +16,28 @@ import org.semanticweb.owl.explanation.impl.blackbox.checker.InconsistentOntolog
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.OWLObjectRenderer;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
-import org.semanticweb.owlapi.model.AxiomType;
-import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
-import org.semanticweb.owlapi.model.OWLException;
-import org.semanticweb.owlapi.model.OWLNaryClassAxiom;
-import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyChange;
-import org.semanticweb.owlapi.model.OWLOntologyChangeListener;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.profiles.OWL2DLProfile;
-import org.semanticweb.owlapi.profiles.OWL2ELProfile;
-import org.semanticweb.owlapi.profiles.OWL2QLProfile;
-import org.semanticweb.owlapi.profiles.OWL2RLProfile;
-import org.semanticweb.owlapi.profiles.OWLProfile;
-import org.semanticweb.owlapi.profiles.OWLProfileReport;
-import org.semanticweb.owlapi.profiles.OWLProfileViolation;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.profiles.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.whatif.tools.axiompattern.AddedAxiomRedundantPattern;
-import org.whatif.tools.axiompattern.AssertedAxiomPattern;
-import org.whatif.tools.axiompattern.AxiomPattern;
-import org.whatif.tools.axiompattern.AxiomPatternFactory;
-import org.whatif.tools.axiompattern.ProfileAxiomPattern;
-import org.whatif.tools.axiompattern.TautologyAxiomPattern;
-import org.whatif.tools.axiompattern.ViolatesOWLDLAxiomPattern;
-import org.whatif.tools.axiompattern.ViolatesOWLELAxiomPattern;
-import org.whatif.tools.axiompattern.ViolatesOWLQLAxiomPattern;
-import org.whatif.tools.axiompattern.ViolatesOWLRLAxiomPattern;
+import org.whatif.tools.axiompattern.*;
 import org.whatif.tools.consequence.WhatifAddedAssertionConsequence;
 import org.whatif.tools.consequence.WhatifConsequence;
 import org.whatif.tools.consequence.WhatifInferenceConsequence;
-import org.whatif.tools.util.AxiomPatternPriorityTable;
-import org.whatif.tools.util.AxiomPriority;
-import org.whatif.tools.util.EnitySelectDialog;
-import org.whatif.tools.util.EntailmentGenerator;
-import org.whatif.tools.util.EventLogging;
-import org.whatif.tools.util.Icons;
-import org.whatif.tools.util.LoggingMouseListener;
-import org.whatif.tools.util.OWLOntologyAxiomSelector;
-import org.whatif.tools.util.ProfileVilationProvider;
-import org.whatif.tools.util.ReasonerRunDiff;
-import org.whatif.tools.util.TautologyManager;
-import org.whatif.tools.util.TerseAxiomList;
-import org.whatif.tools.util.UpdateInferenceInspector;
-import org.whatif.tools.util.WhatifAxiomTable;
-import org.whatif.tools.util.WhatifHistoryTable;
-import org.whatif.tools.util.WhatifUtils;
+import org.whatif.tools.util.*;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
 
 @SuppressWarnings("rawtypes")
 public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent implements UpdateInferenceInspector,
@@ -135,216 +50,199 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 	private RunInferenceInspectorTask task;
 	private JLabel taskOutput = new JLabel("Progress..");
 
-	List<ReasonerRunDiff> history_diffs = new ArrayList<ReasonerRunDiff>();
-	Map<Class<? extends ProfileAxiomPattern>, OWLProfileReport> current_profile_reports = new HashMap<Class<? extends ProfileAxiomPattern>, OWLProfileReport>();
+	private List<ReasonerRunDiff> history_diffs = new ArrayList<>();
+	private ReportManager reportManager = new ReportManager();
 
-	Set<WhatifConsequence> consequences_inferred = new HashSet<WhatifConsequence>();
-	Set<WhatifConsequence> consequences_removed_inferred = new HashSet<WhatifConsequence>();
-	Set<WhatifConsequence> consequences_asserted = new HashSet<WhatifConsequence>();
-	ReasonerRunDiff selected_history_point = null;
+	private Set<WhatifConsequence> consequences_inferred = new HashSet<>();
+	private Set<WhatifConsequence> consequences_removed_inferred = new HashSet<>();
+	private Set<WhatifConsequence> consequences_asserted = new HashSet<>();
+	private ReasonerRunDiff selected_history_point = null;
 
 	private OWLModelManagerListener owlModelManagerListener;
 
-	JPanel panel_top = null;
-	JPanel panel_center = null;
-	JPanel panel_inferenceinspector = null;
-	JSplitPane split_view_options = null;
-	JSplitPane split_history_options = null;
+	private JPanel panel_top = null;
+	private JPanel panel_center = null;
+	private JPanel panel_inferenceinspector = null;
+	private JSplitPane split_view_options = null;
+	private JSplitPane split_history_options = null;
 
-	JPanel panel_difftool = null;
-	JPanel panel_report = null;
-	JPanel panel_wii = null;
+	private JPanel panel_difftool = null;
+	private JPanel panel_report = null;
+	private JPanel panel_wii = null;
 
 	// JPanel typeselectpanel = null;
-	JPanel typecheckboxpanel = null;
-	JPanel orderpanel = null;
-	JPanel axiompanel_added = null;
-	JPanel axiompanel_removed = null;
-	JScrollPane axiomscrollpanel_added = null;
-	JScrollPane axiomscrollpanel_removed = null;
-	JScrollPane axiomscrollpanel_added_asserted = null;
-	JPanel filterpanel = null;
-	JPanel panel_history_axioms = null;
+	private JPanel typecheckboxpanel = null;
+	private JPanel orderpanel = null;
+	private JPanel axiompanel_added = null;
+	private JPanel axiompanel_removed = null;
 	// JPanel view_hierachies_added = new JPanel(new GridLayout(4, 1));
 	// JPanel view_hierachies_removed = new JPanel(new GridLayout(4, 1));
 
-	JPanel view_added = new JPanel(new BorderLayout());
-	JPanel view_removed = new JPanel(new BorderLayout());
+	private JPanel view_added = new JPanel(new BorderLayout());
+	private JPanel view_removed = new JPanel(new BorderLayout());
 
-	JPanel inferenceinspectoroptions = null;
-	JPanel difftooloptions = null;
+	private JPanel inferenceinspectoroptions = null;
+	private JPanel difftooloptions = null;
 
-	JToggleButton bt_ii_history = new JToggleButton("History", true);
-	JToggleButton bt_ii_opts = new JToggleButton("Options", true);
-	JToggleButton bt_diff_diff = new JToggleButton("Diff", true);
-	JToggleButton bt_diff_opts = new JToggleButton("Options", true);
+	private JToggleButton bt_ii_history = new JToggleButton("History", true);
+	private JToggleButton bt_ii_opts = new JToggleButton("Options", true);
+	private JToggleButton bt_diff_diff = new JToggleButton("Diff", true);
+	private JToggleButton bt_diff_opts = new JToggleButton("Options", true);
 
 	private EnitySelectDialog dialog_selectentity = null;
 	private OWLEntitySelectorPanel entityselect = null;
 
-	final WhatifHistoryTable table_history_select = new WhatifHistoryTable();
-	ButtonGroup buttong_group_table_history_select = new ButtonGroup();
-	JRadioButton lastButton = null;
+	private final WhatifHistoryTable table_history_select = new WhatifHistoryTable();
+	private ButtonGroup buttong_group_table_history_select = new ButtonGroup();
+	private JRadioButton lastButton = null;
 
-	WhatifAxiomTable axioms_added = null;
-	WhatifAxiomTable axioms_removed = null;
-	WhatifAxiomTable axioms_added_assertions = null;
-	AxiomPatternPriorityTable table_axiom_pattern_priority = new AxiomPatternPriorityTable(this);
-	JList<AxiomType> axiomtypelist = new JList<AxiomType>();
-	Set<AxiomType> currentaxt = new HashSet<AxiomType>();
-	Map<JCheckBox, Set<AxiomType>> cb_at = new HashMap<JCheckBox, Set<AxiomType>>();
+	private WhatifAxiomTable axioms_added = null;
+	private WhatifAxiomTable axioms_removed = null;
+	private WhatifAxiomTable axioms_added_assertions = null;
+	private AxiomPatternPriorityTable table_axiom_pattern_priority = new AxiomPatternPriorityTable(this);
+	private JList<AxiomType> axiomtypelist = new JList<>();
+	private Set<AxiomType> currentaxt = new HashSet<>();
+	private Map<JCheckBox, Set<AxiomType>> cb_at = new HashMap<>();
 
-	ExplanationGeneratorFactory<OWLAxiom> genFac = null;
-	ExplanationGeneratorFactory<OWLAxiom> incongenFac = null;
-	static ExplanationGenerator<OWLAxiom> gen = null;
-	static ExplanationGenerator<OWLAxiom> incongen = null;
+	private ExplanationGeneratorFactory<OWLAxiom> genFac = null;
+	private ExplanationGeneratorFactory<OWLAxiom> incongenFac = null;
+	private static ExplanationGenerator<OWLAxiom> gen = null;
+	private static ExplanationGenerator<OWLAxiom> incongen = null;
 
-	TerseAxiomList list_history_added_axioms = new TerseAxiomList();
-	TerseAxiomList list_history_removed_axioms = new TerseAxiomList();
+	private TerseAxiomList list_history_added_axioms = new TerseAxiomList();
+	private TerseAxiomList list_history_removed_axioms = new TerseAxiomList();
 
-	Runnable updateSplitRunnable = new Runnable() {
+	private Runnable updateSplitRunnable = () -> {
+        boolean hist = bt_ii_history.isSelected();
+        boolean opts = bt_ii_opts.isSelected();
 
-		@Override
-		public void run() {
-			boolean hist = bt_ii_history.isSelected();
-			boolean opts = bt_ii_opts.isSelected();
+        if (hist) {
+            if (opts) {
+                split_view_options.getTopComponent().setMinimumSize(new Dimension());
+                split_view_options.setDividerLocation(0.5d);
 
-			if (hist) {
-				if (opts) {
-					split_view_options.getTopComponent().setMinimumSize(new Dimension());
-					split_view_options.setDividerLocation(0.5d);
+                split_view_options.getBottomComponent().setMinimumSize(new Dimension());
+                split_view_options.setDividerLocation(0.5d);
 
-					split_view_options.getBottomComponent().setMinimumSize(new Dimension());
-					split_view_options.setDividerLocation(0.5d);
+                split_history_options.getLeftComponent().setMinimumSize(new Dimension());
+                split_history_options.setDividerLocation(0.5d);
 
-					split_history_options.getLeftComponent().setMinimumSize(new Dimension());
-					split_history_options.setDividerLocation(0.5d);
+                split_history_options.getRightComponent().setMinimumSize(new Dimension());
+                split_history_options.setDividerLocation(0.5d);
 
-					split_history_options.getRightComponent().setMinimumSize(new Dimension());
-					split_history_options.setDividerLocation(0.5d);
+            } else {
+                split_view_options.getTopComponent().setMinimumSize(new Dimension());
+                split_view_options.setDividerLocation(0.5d);
 
-				} else {
-					split_view_options.getTopComponent().setMinimumSize(new Dimension());
-					split_view_options.setDividerLocation(0.5d);
+                split_view_options.getBottomComponent().setMinimumSize(new Dimension());
+                split_view_options.setDividerLocation(0.5d);
 
-					split_view_options.getBottomComponent().setMinimumSize(new Dimension());
-					split_view_options.setDividerLocation(0.5d);
+                split_history_options.getLeftComponent().setMinimumSize(new Dimension());
+                split_history_options.setDividerLocation(1.0d);
 
-					split_history_options.getLeftComponent().setMinimumSize(new Dimension());
-					split_history_options.setDividerLocation(1.0d);
+                split_history_options.getRightComponent().setMinimumSize(new Dimension());
+                split_history_options.setDividerLocation(0.0d);
+            }
+        } else {
+            if (opts) {
+                split_view_options.getTopComponent().setMinimumSize(new Dimension());
+                split_view_options.setDividerLocation(0.5d);
 
-					split_history_options.getRightComponent().setMinimumSize(new Dimension());
-					split_history_options.setDividerLocation(0.0d);
-				}
-			} else {
-				if (opts) {
-					split_view_options.getTopComponent().setMinimumSize(new Dimension());
-					split_view_options.setDividerLocation(0.5d);
+                split_view_options.getBottomComponent().setMinimumSize(new Dimension());
+                split_view_options.setDividerLocation(0.5d);
 
-					split_view_options.getBottomComponent().setMinimumSize(new Dimension());
-					split_view_options.setDividerLocation(0.5d);
+                split_history_options.getLeftComponent().setMinimumSize(new Dimension());
+                split_history_options.setDividerLocation(0.0d);
 
-					split_history_options.getLeftComponent().setMinimumSize(new Dimension());
-					split_history_options.setDividerLocation(0.0d);
+                split_history_options.getRightComponent().setMinimumSize(new Dimension());
+                split_history_options.setDividerLocation(1.0d);
+            } else {
+                split_view_options.getTopComponent().setMinimumSize(new Dimension());
+                split_view_options.setDividerLocation(0.0d);
 
-					split_history_options.getRightComponent().setMinimumSize(new Dimension());
-					split_history_options.setDividerLocation(1.0d);
-				} else {
-					split_view_options.getTopComponent().setMinimumSize(new Dimension());
-					split_view_options.setDividerLocation(0.0d);
+                split_view_options.getBottomComponent().setMinimumSize(new Dimension());
+                split_view_options.setDividerLocation(1.0d);
+            }
+        }
+    };
 
-					split_view_options.getBottomComponent().setMinimumSize(new Dimension());
-					split_view_options.setDividerLocation(1.0d);
-				}
-			}
-		}
-	};
+	private ActionListener onCheckBoxSelect = e -> {
+        // TODO: It is technically unnecessary to recompute the entire
+        // table.
+        WhatifUtils.p("onCheckBoxSelect()");
+        updateConsequenceTables();
+        updateView();
+    };
 
-	ActionListener onCheckBoxSelect = new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			// TODO: It is technically unnecessary to recompute the entire
-			// table.
-			WhatifUtils.p("onCheckBoxSelect()");
-			updateConsequenceTables();
-			updateView();
-		}
-	};
+	private ActionListener cb_axt_listener = e -> {
+        ListModel model = axiomtypelist.getModel();
+        JCheckBox cb = (JCheckBox) e.getSource();
+        for (int i = 0; i < model.getSize(); i++) {
+            AxiomType at = (AxiomType) model.getElementAt(i);
+            if (cb_at.get(cb).contains(at)) {
+                if (cb.isSelected() && !axiomtypelist.isSelectedIndex(i)) {
+                    axiomtypelist.setSelectedIndex(i);
+                } else if (!cb.isSelected() && axiomtypelist.isSelectedIndex(i)) {
+                    axiomtypelist.setSelectedIndex(i);
+                }
+            }
+        }
+        cbAxtMessageOrUpdate(cb);
+    };
 
-	ActionListener cb_axt_listener = new ActionListener() {
+	private JCheckBox cb_tautology = new JCheckBox("Include Tautologies", false);
+	private JCheckBox cb_selected = new JCheckBox("Focus selected", false);
+	private JCheckBox cb_keepimportant = new JCheckBox("Keep critical", true);
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			ListModel model = axiomtypelist.getModel();
-			JCheckBox cb = (JCheckBox) e.getSource();
-			for (int i = 0; i < model.getSize(); i++) {
-				AxiomType at = (AxiomType) model.getElementAt(i);
-				if (cb_at.get(cb).contains(at)) {
-					if (cb.isSelected() && !axiomtypelist.isSelectedIndex(i)) {
-						axiomtypelist.setSelectedIndex(i);
-					} else if (!cb.isSelected() && axiomtypelist.isSelectedIndex(i)) {
-						axiomtypelist.setSelectedIndex(i);
-					}
-				}
-			}
-			cbAxtMessageOrUpdate(cb);
-		}
-	};
+	private JCheckBox cb_axt_csub = new JCheckBox("Subsumption", false);
+	private JCheckBox cb_axt_assert = new JCheckBox("Types", false);
+	private JCheckBox cb_axt_property_assert = new JCheckBox("Relations", false);
+	private JCheckBox cb_axt_equiv = new JCheckBox("Equivalence", false);
+	private JCheckBox cb_axt_disj = new JCheckBox("Disjointness", false);
+	private JCheckBox cb_axt_character = new JCheckBox("Characteristics", false);
 
-	JCheckBox cb_tautology = new JCheckBox("Include Tautologies", false);
-	JCheckBox cb_selected = new JCheckBox("Focus selected", false);
-	JCheckBox cb_keepimportant = new JCheckBox("Keep critical", true);
+	private TautologyManager tautologytracker = null;
 
-	JCheckBox cb_axt_csub = new JCheckBox("Subsumption", false);
-	JCheckBox cb_axt_assert = new JCheckBox("Types", false);
-	JCheckBox cb_axt_property_assert = new JCheckBox("Relations", false);
-	JCheckBox cb_axt_equiv = new JCheckBox("Equivalence", false);
-	JCheckBox cb_axt_disj = new JCheckBox("Disjointness", false);
-	JCheckBox cb_axt_character = new JCheckBox("Characteristics", false);
+	private JButton bt_axtypes_advanced = new JButton("Advanced");
 
-	TautologyManager tautologytracker = null;
-
-	JButton bt_axtypes_advanced = new JButton("Advanced");
-
-	JButton bt_entity_filter_reset = new JButton("Reset");
-	JButton bt_entity_filter = new JButton("Entity Filter");
-	JTextArea entity_select_label = new JTextArea("None selected.");
+	private JButton bt_entity_filter_reset = new JButton("Reset");
+	private JButton bt_entity_filter = new JButton("Entity Filter");
+	private JTextArea entity_select_label = new JTextArea("None selected.");
 
 	// JComboBox<AxiomListGroup> combo_group = new JComboBox<AxiomListGroup>();
 	// JComboBox<AxiomRendererSelect> combo_renderer = new
 	// JComboBox<AxiomRendererSelect>();
 	// JComboBox<String> combo_type = new JComboBox<String>();
 
-	JToggleButton bt_diff = new JToggleButton();
-	JLabel l = new JLabel();
-	JToggleButton bt_history = new JToggleButton();
+	private JToggleButton bt_diff = new JToggleButton();
+	private JToggleButton bt_history = new JToggleButton();
 	// JToggleButton bt_toggle_axiom_hierarchy = new JToggleButton();
-	JToggleButton bt_report = new JToggleButton();
-	JLabel syncstatus = new JLabel();
-	JLabel addedlabel = new JLabel("New Inferences");
-	JLabel removedlabel = new JLabel("Lost Inferences");
+	private JToggleButton bt_report = new JToggleButton();
+	private JLabel syncstatus = new JLabel();
+	private JLabel addedlabel = new JLabel("New Inferences");
+	private JLabel removedlabel = new JLabel("Lost Inferences");
 
-	ReasonerStatus reasonerstatus = ReasonerStatus.REASONER_NOT_INITIALIZED;
+	private ReasonerStatus reasonerstatus = ReasonerStatus.REASONER_NOT_INITIALIZED;
 
-	boolean all_atomic_subs = false;
-	boolean initialised = false;
-	boolean reallyclassified = false;
+	private boolean initialised = false;
+	private boolean reallyclassified = false;
 
-	long startreasonertime = 0;
-	long endreasonertime = 0;
+	private long startreasonertime = 0;
+	private long endreasonertime = 0;
 
 	/*
 	 * Print metrics
 	 */
-	long tautology = 0;
-	long profile = 0;
-	long total = 0;
+	private long tautology = 0;
+	private long profile = 0;
+	private long total = 0;
 
-	Map<AxiomPattern, Long> pattern_timings = new HashMap<AxiomPattern, Long>();
+	private Map<AxiomPattern, Long> pattern_timings = new HashMap<>();
 
 	@Override
 	public void initialiseView() throws Exception {
 		setLayout(new BorderLayout());
-		EventLogging.prepare(new File("_output_wii_"+System.currentTimeMillis()+".csv"));
+		///EventLogging.prepare(new File("_output_wii_"+System.currentTimeMillis()+".csv"));
 		getOWLModelManager().addOntologyChangeListener(this);
 		getOWLWorkspace().getOWLSelectionModel().addListener(this);
 		// GridBagConstraints c = createInitialGridBagConstraints();
@@ -393,13 +291,11 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		}
 		catch(Throwable e) {
 			WhatifUtils.e("EntitySelector re-initialisation unsuccessful");
-			bt_entity_filter.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
-							"entity_filter", "NA", "wii");
-					JOptionPane.showMessageDialog(null, "Entity Panel was not successfully initialised");
-				}
-			});
+			bt_entity_filter.addActionListener(e1 -> {
+                EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
+                        "entity_filter", "NA", "wii");
+                JOptionPane.showMessageDialog(null, "Entity Panel was not successfully initialised");
+            });
 		}
 		
 		prepareAxiomTypeCheckboxPanel();
@@ -419,8 +315,8 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 
 		panel_top.add(orderpanel);
 
-		createReasonerSnapshot(System.currentTimeMillis(), getAllAxiomTypes(), new HashSet<OWLAxiom>(),
-				new HashSet<WhatifInferenceConsequence>());
+		createReasonerSnapshot(System.currentTimeMillis(), getAllAxiomTypes(), new HashSet<>(),
+				new HashSet<>());
 
 		prepareKnowledgeAddedHeader();
 		prepareKnowledgeRemovedHeader();
@@ -459,30 +355,24 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 			task.execute();
 		}
 
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				bt_ii_history.doClick();
-				bt_ii_opts.doClick();
-			}
-		});
+		SwingUtilities.invokeLater(() -> {
+            // TODO Auto-generated method stub
+            bt_ii_history.doClick();
+            bt_ii_opts.doClick();
+        });
 
 		initialised = true;
 		log.info("Entailment inspector initialized");
 	}
 
 	private void createOWLModelManagerLister() {
-		owlModelManagerListener = new OWLModelManagerListener() {
-			public void handleChange(OWLModelManagerChangeEvent event) {
-				try {
-					handleModelManagerEvent(event.getType());
-				} catch (Exception t) {
-					// ProtegeApplication.getLogManager()event..getErrorLog().logError(t);
-				}
-			}
-		};
+		owlModelManagerListener = event -> {
+            try {
+                handleModelManagerEvent(event.getType());
+            } catch (Exception t) {
+                // ProtegeApplication.getLogManager()event..getErrorLog().logError(t);
+            }
+        };
 		getOWLModelManager().addListener(owlModelManagerListener);
 	}
 
@@ -531,7 +421,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		genFac = ExplanationManager.createExplanationGeneratorFactory(
 				getOWLModelManager().getOWLReasonerManager().getCurrentReasonerFactory().getReasonerFactory());
 		incongenFac = new InconsistentOntologyExplanationGeneratorFactory(
-				getOWLModelManager().getOWLReasonerManager().getCurrentReasonerFactory().getReasonerFactory(), 10000l);
+				getOWLModelManager().getOWLReasonerManager().getCurrentReasonerFactory().getReasonerFactory(), 10000);
 		gen = genFac.createExplanationGenerator(getO());
 		incongen = incongenFac.createExplanationGenerator(getO());
 	}
@@ -540,33 +430,27 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		entityselect = new OWLEntitySelectorPanel(getOWLEditorKit(), true);
 		dialog_selectentity = new EnitySelectDialog(getFrame(), this, entityselect);
 
-		bt_entity_filter.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
-						"entity_filter", "NA", "wii");
-				dialog_selectentity.setVisible(true);
-			}
-		});
+		bt_entity_filter.addActionListener(e -> {
+            EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
+                    "entity_filter", "NA", "wii");
+            dialog_selectentity.setVisible(true);
+        });
 
-		bt_axtypes_advanced.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JPanel panel_at_advanced_plus_label = createLabelledGridLayoutPanel("Advanced Axiom Type Selection",
-						axiomtypelist);
-				JOptionPane.showMessageDialog(EntailmentInspectorView.this, panel_at_advanced_plus_label);
-				updateConsequenceTables();
-			}
-		});
+		bt_axtypes_advanced.addActionListener(e -> {
+            JPanel panel_at_advanced_plus_label = createLabelledGridLayoutPanel("Advanced Axiom Type Selection",
+                    axiomtypelist);
+            JOptionPane.showMessageDialog(EntailmentInspectorView.this, panel_at_advanced_plus_label);
+            updateConsequenceTables();
+        });
 
-		bt_entity_filter_reset.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
-						"entity_filter_reset", "NA", "wii");
-				entityselect.setSelection(new HashSet<OWLEntity>());
-				updateEntitySelectTA();
-				updateView();
-				// SwingUtilities.invokeLater(updateView);
-			}
-		});
+		bt_entity_filter_reset.addActionListener(e -> {
+            EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
+                    "entity_filter_reset", "NA", "wii");
+            entityselect.setSelection(new HashSet<>());
+            updateEntitySelectTA();
+            updateView();
+            // SwingUtilities.invokeLater(updateView);
+        });
 	}
 
 	private void prepareMainPanels() {
@@ -589,7 +473,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 	}
 
 	private void prepareAxiomTypeList() {
-		DefaultListModel<AxiomType> dm = new DefaultListModel<AxiomType>();
+		DefaultListModel<AxiomType> dm = new DefaultListModel<>();
 		axiomtypelist.setModel(dm);
 		for (AxiomType t : getAllAxiomTypes()) {
 			dm.addElement(t);
@@ -666,7 +550,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 
 		// JPanel fontsize_panel = createFontSizePanel();
 
-		filterpanel = new JPanel();
+		JPanel filterpanel = new JPanel();
 		// filterpanel.setBackground(Color.BLUE);
 		filterpanel.setLayout(new BoxLayout(filterpanel, BoxLayout.Y_AXIS));
 		filterpanel.setBorder(new EmptyBorder(3, 10, 3, 10));
@@ -678,15 +562,12 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		// JPanel panel_renderer_plus_label =
 		// getLabelledGridLayoutPanel("Renderer", combo_renderer);
 
-		axiomtypelist.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				//updateConsequenceTables();
-				//updateView();
-				EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
-						"list_axiomtypes_selection", "NA", "wii");
-			}
-		});
+		axiomtypelist.addListSelectionListener(e -> {
+            //updateConsequenceTables();
+            //updateView();
+            EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
+                    "list_axiomtypes_selection", "NA", "wii");
+        });
 
 		JPanel panel_axiomprio_plus_label = createLabelledGridLayoutPanel("Priority Table",
 				table_axiom_pattern_priority);
@@ -740,8 +621,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		filterpanel.add(panel_axiomprio_plus_label);
 		// filterpanel.add(panel_tautology_select_plus_label);
 
-		JScrollPane panel_scroll_filterpanel = new JScrollPane(filterpanel);
-		return panel_scroll_filterpanel;
+		return new JScrollPane(filterpanel);
 	}
 
 	private void prepareInferenceHistoryHistoryPanel(JComponent tab_history_history_panel) {
@@ -757,25 +637,13 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		// BoxLayout(panel_history_add_removed, BoxLayout.Y_AXIS));
 		JScrollPane js1 = new JScrollPane(list_history_added_axioms);
 		list_history_added_axioms.setAutoscrolls(true);
-		list_history_added_axioms.addListSelectionListener(new ListSelectionListener() {
-
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
-						"list_history_added_axioms_selection", "NA", "wii");
-			}
-		});
+		list_history_added_axioms.addListSelectionListener(e -> EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
+                "list_history_added_axioms_selection", "NA", "wii"));
 
 		JScrollPane js2 = new JScrollPane(list_history_removed_axioms);
 		list_history_removed_axioms.setAutoscrolls(true);
-		list_history_removed_axioms.addListSelectionListener(new ListSelectionListener() {
-
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
-						"list_history_removed_axioms_selection", "NA", "wii");
-			}
-		});
+		list_history_removed_axioms.addListSelectionListener(e -> EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
+                "list_history_removed_axioms_selection", "NA", "wii"));
 
 		panel_history_add.add(addedlabel, BorderLayout.NORTH);
 		panel_history_add.add(js1, BorderLayout.CENTER);
@@ -796,14 +664,14 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 	}
 
 	private void prepareAxiomListsForHistoryView() {
-		axiomscrollpanel_added = new JScrollPane(axioms_added);
-		axiomscrollpanel_removed = new JScrollPane(axioms_removed);
-		axiomscrollpanel_added_asserted = new JScrollPane(axioms_added_assertions);
+		JScrollPane axiomscrollpanel_added = new JScrollPane(axioms_added);
+		JScrollPane axiomscrollpanel_removed = new JScrollPane(axioms_removed);
+		JScrollPane axiomscrollpanel_added_asserted = new JScrollPane(axioms_added_assertions);
 		axiompanel_added.add(axiomscrollpanel_added);
 		axiompanel_removed.add(axiomscrollpanel_removed);
 		JPanel p = createLabelledGridLayoutPanel("Consequences of new assertions", axiomscrollpanel_added_asserted);
 		axiompanel_removed.add(p);
-		Map<WhatifConsequence, AxiomPriority> infs = new HashMap<WhatifConsequence, AxiomPriority>();
+		Map<WhatifConsequence, AxiomPriority> infs = new HashMap<>();
 		axioms_added.setAxioms(infs);
 		axioms_removed.setAxioms(infs);
 	}
@@ -815,9 +683,8 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		JPanel panel_tautology_select = new JPanel();
 		panel_tautology_select.setLayout(new FlowLayout(FlowLayout.LEFT));
 		panel_tautology_select.add(cb_tautology);
-		JPanel panel_tautology_select_plus_label = createLabelledGridLayoutPanel("Filter Tautologies",
+		return createLabelledGridLayoutPanel("Filter Tautologies",
 				panel_tautology_select);
-		return panel_tautology_select_plus_label;
 	}
 
 	private void prepareTautologyManager() {
@@ -886,12 +753,12 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 
 		// typecheckboxpanel.setBackground(Color.BLUE);
 		// typecheckboxpanel.setSize(new Dimension(300, 1));
-		Set<AxiomType> types = new HashSet<AxiomType>();
+		Set<AxiomType> types = new HashSet<>();
 		types.add(AxiomType.CLASS_ASSERTION);
 		cb_at.put(cb_axt_assert, types);
 		cb_axt_assert.addActionListener(cb_axt_listener);
 
-		types = new HashSet<AxiomType>();
+		types = new HashSet<>();
 		types.add(AxiomType.FUNCTIONAL_DATA_PROPERTY);
 		types.add(AxiomType.FUNCTIONAL_OBJECT_PROPERTY);
 		types.add(AxiomType.INVERSE_FUNCTIONAL_OBJECT_PROPERTY);
@@ -903,28 +770,28 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		cb_at.put(cb_axt_character, types);
 		cb_axt_character.addActionListener(cb_axt_listener);
 
-		types = new HashSet<AxiomType>();
+		types = new HashSet<>();
 		types.add(AxiomType.SUBCLASS_OF);
 		types.add(AxiomType.SUB_OBJECT_PROPERTY);
 		types.add(AxiomType.SUB_DATA_PROPERTY);
 		cb_at.put(cb_axt_csub, types);
 		cb_axt_csub.addActionListener(cb_axt_listener);
 
-		types = new HashSet<AxiomType>();
+		types = new HashSet<>();
 		types.add(AxiomType.DISJOINT_CLASSES);
 		// types.add(AxiomType.DISJOINT_OBJECT_PROPERTIES);
 		// types.add(AxiomType.DISJOINT_DATA_PROPERTIES);
 		cb_at.put(cb_axt_disj, types);
 		cb_axt_disj.addActionListener(cb_axt_listener);
 
-		types = new HashSet<AxiomType>();
+		types = new HashSet<>();
 		types.add(AxiomType.EQUIVALENT_CLASSES);
 		types.add(AxiomType.EQUIVALENT_DATA_PROPERTIES);
 		types.add(AxiomType.EQUIVALENT_OBJECT_PROPERTIES);
 		cb_at.put(cb_axt_equiv, types);
 		cb_axt_equiv.addActionListener(cb_axt_listener);
 
-		types = new HashSet<AxiomType>();
+		types = new HashSet<>();
 		// types.add(AxiomType.DATA_PROPERTY_ASSERTION);
 		types.add(AxiomType.OBJECT_PROPERTY_ASSERTION);
 		cb_at.put(cb_axt_property_assert, types);
@@ -1002,69 +869,67 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 
 	private void prepareMainButtons() {
 
-		ActionListener main_button_actionlistener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (e.getSource().equals(bt_history)) {
-					if (bt_history.isSelected()) {
-						EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
-								"bt_history", "NA", "wii");
-						difftooloptions.setVisible(false);
-						inferenceinspectoroptions.setVisible(true);
-						bt_report.setSelected(false);
-						bt_diff.setSelected(false);
-						bt_history.setSelected(true);
-						panel_center.removeAll();
-						panel_center.add(panel_inferenceinspector);
-						panel_inferenceinspector.validate();
-					} else {
-						difftooloptions.setVisible(false);
-						inferenceinspectoroptions.setVisible(false);
-						panel_center.removeAll();
-						panel_center.add(panel_wii);
-						panel_wii.validate();
-					}
-				} else if (e.getSource().equals(bt_diff)) {
-					if (bt_diff.isSelected()) {
-						difftooloptions.setVisible(true);
-						inferenceinspectoroptions.setVisible(false);
-						bt_report.setSelected(false);
-						bt_diff.setSelected(true);
-						bt_history.setSelected(false);
-						panel_center.removeAll();
-						panel_center.add(panel_difftool);
-						panel_difftool.validate();
-					} else {
-						difftooloptions.setVisible(false);
-						inferenceinspectoroptions.setVisible(false);
-						panel_center.removeAll();
-						panel_center.add(panel_wii);
-						panel_wii.validate();
-					}
-				} else if (e.getSource().equals(bt_report)) {
-					if (bt_report.isSelected()) {
-						difftooloptions.setVisible(false);
-						inferenceinspectoroptions.setVisible(false);
-						bt_report.setSelected(true);
-						bt_diff.setSelected(false);
-						bt_history.setSelected(false);
-						updateReport();
-						panel_center.removeAll();
-						panel_center.add(panel_report);
-						panel_difftool.validate();
-					} else {
-						difftooloptions.setVisible(false);
-						inferenceinspectoroptions.setVisible(false);
-						panel_center.removeAll();
-						panel_center.add(panel_wii);
-						panel_wii.validate();
-					}
-				}
-				panel_center.validate();
-				panel_center.repaint();
-				// SwingUtilities.invokeLater(updateView);
-				updateView();
-			}
-		};
+		ActionListener main_button_actionlistener = e -> {
+            if (e.getSource().equals(bt_history)) {
+                if (bt_history.isSelected()) {
+                    EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
+                            "bt_history", "NA", "wii");
+                    difftooloptions.setVisible(false);
+                    inferenceinspectoroptions.setVisible(true);
+                    bt_report.setSelected(false);
+                    bt_diff.setSelected(false);
+                    bt_history.setSelected(true);
+                    panel_center.removeAll();
+                    panel_center.add(panel_inferenceinspector);
+                    panel_inferenceinspector.validate();
+                } else {
+                    difftooloptions.setVisible(false);
+                    inferenceinspectoroptions.setVisible(false);
+                    panel_center.removeAll();
+                    panel_center.add(panel_wii);
+                    panel_wii.validate();
+                }
+            } else if (e.getSource().equals(bt_diff)) {
+                if (bt_diff.isSelected()) {
+                    difftooloptions.setVisible(true);
+                    inferenceinspectoroptions.setVisible(false);
+                    bt_report.setSelected(false);
+                    bt_diff.setSelected(true);
+                    bt_history.setSelected(false);
+                    panel_center.removeAll();
+                    panel_center.add(panel_difftool);
+                    panel_difftool.validate();
+                } else {
+                    difftooloptions.setVisible(false);
+                    inferenceinspectoroptions.setVisible(false);
+                    panel_center.removeAll();
+                    panel_center.add(panel_wii);
+                    panel_wii.validate();
+                }
+            } else if (e.getSource().equals(bt_report)) {
+                if (bt_report.isSelected()) {
+                    difftooloptions.setVisible(false);
+                    inferenceinspectoroptions.setVisible(false);
+                    bt_report.setSelected(true);
+                    bt_diff.setSelected(false);
+                    bt_history.setSelected(false);
+                    updateReport();
+                    panel_center.removeAll();
+                    panel_center.add(panel_report);
+                    panel_difftool.validate();
+                } else {
+                    difftooloptions.setVisible(false);
+                    inferenceinspectoroptions.setVisible(false);
+                    panel_center.removeAll();
+                    panel_center.add(panel_wii);
+                    panel_wii.validate();
+                }
+            }
+            panel_center.validate();
+            panel_center.repaint();
+            // SwingUtilities.invokeLater(updateView);
+            updateView();
+        };
 
 		syncstatus.setPreferredSize(new Dimension(32, 32));
 		syncstatus.setToolTipText("Reasoner out of sync");
@@ -1100,8 +965,8 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		 */
 	}
 
-	protected JComponent createHistoryPane() {
-		panel_history_axioms = new JPanel(new BorderLayout());
+	private JComponent createHistoryPane() {
+		JPanel panel_history_axioms = new JPanel(new BorderLayout());
 		JPanel p = new JPanel(new GridLayout(1, 1));
 		JScrollPane scroll = new JScrollPane(table_history_select);
 		panel_history_axioms.add(new JLabel("Snapshot"), BorderLayout.NORTH);
@@ -1121,14 +986,13 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		JScrollPane txtAreaScroll = new JScrollPane();
 		txtAreaScroll.setViewportView(txtArea);
 		txtAreaScroll.setAutoscrolls(true);
-		StringBuilder sb = new StringBuilder();
-		sb.append("<html>");
-		sb.append("<h1>Whatif Inference Inspector</h1>" + "<br />");
-		sb.append("<b>Info: </b>" + getO().getOntologyID().getOntologyIRI().toString() + "<br />");
-		sb.append("<b>Date: </b>" + getDate() + "<br />");
-		sb.append("<b>Features: </b>" + getO().getLogicalAxiomCount() + "<br />");
-		sb.append("</html>");
-		txtArea.setText(sb.toString());
+		String sb = "<html>" +
+				"<h1>Whatif Inference Inspector</h1>" + "<br />" +
+				"<b>Info: </b>" + getO().getOntologyID().getOntologyIRI().toString() + "<br />" +
+				"<b>Date: </b>" + getDate() + "<br />" +
+				"<b>Features: </b>" + getO().getLogicalAxiomCount() + "<br />" +
+				"</html>";
+		txtArea.setText(sb);
 		panel_wii.removeAll();
 		panel_wii.add(txtArea);
 		panel_wii.validate();
@@ -1172,13 +1036,13 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 
 		tautologytracker.clear();
 
-		all_atomic_subs = false;
+		//boolean all_atomic_subs = false;
 
 		startreasonertime = 0;
 		endreasonertime = 0;
 
-		createReasonerSnapshot(System.currentTimeMillis(), getAllAxiomTypes(), new HashSet<OWLAxiom>(),
-				new HashSet<WhatifInferenceConsequence>());
+		createReasonerSnapshot(System.currentTimeMillis(), getAllAxiomTypes(), new HashSet<>(),
+				new HashSet<>());
 	}
 
 	/*
@@ -1198,14 +1062,13 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		JScrollPane txtAreaScroll = new JScrollPane();
 		txtAreaScroll.setViewportView(txtArea);
 		txtAreaScroll.setAutoscrolls(true);
-		StringBuilder sb = new StringBuilder();
-		sb.append("<html>");
-		sb.append("<h1>Inference Report</h1>" + "<br />");
-		sb.append("<b>Ontology: </b>" + getO().getOntologyID().getOntologyIRI().toString() + "<br />");
-		sb.append("<b>Date: </b>" + getDate() + "<br />");
-		sb.append("<b>Number of asserted logical axioms: </b>" + getO().getLogicalAxiomCount() + "<br />");
-		sb.append("</html>");
-		txtArea.setText(sb.toString());
+		String sb = "<html>" +
+				"<h1>Inference Report</h1>" + "<br />" +
+				"<b>Ontology: </b>" + getO().getOntologyID().getOntologyIRI().toString() + "<br />" +
+				"<b>Date: </b>" + getDate() + "<br />" +
+				"<b>Number of asserted logical axioms: </b>" + getO().getLogicalAxiomCount() + "<br />" +
+				"</html>";
+		txtArea.setText(sb);
 		panel_report.removeAll();
 		panel_report.add(txtArea);
 		panel_report.validate();
@@ -1218,7 +1081,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		} else {
 			StringBuilder sb = new StringBuilder();
 			for (OWLEntity e : selectedinselector) {
-				sb.append(e.getIRI().getFragment() + ", ");
+				sb.append(e.getIRI().getRemainder() + ", ");
 			}
 			entity_select_label.setText(sb.toString().substring(0, sb.toString().length() - 2));
 		}
@@ -1227,8 +1090,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 	}
 
 	public OWLObject updateView() {
-		OWLEntity entity = getOWLWorkspace().getOWLSelectionModel().getSelectedEntity();
-		return (entity);
+		return (getOWLWorkspace().getOWLSelectionModel().getSelectedEntity());
 	}
 
 	@Override
@@ -1271,6 +1133,9 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		/*
 		 * Main task. Executed in background thread.
 		 */
+
+		OWLDataFactory df = OWLManager.getOWLDataFactory();
+
 		@Override
 		public Void doInBackground() {
 			// Initialize progress property.
@@ -1301,24 +1166,20 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		}
 
 		private void updateExpressivity() {
-			OWLProfile p = new OWL2DLProfile();
-			OWLProfileReport r1 = p.checkOntology(getO());
-			current_profile_reports.put(ViolatesOWLDLAxiomPattern.class, r1);
+			OWLProfileReport r1 = new OWL2DLProfile().checkOntology(getO());
+			reportManager.addReport(ViolatesOWLDLAxiomPattern.class, r1);
 			setProgress(5);
 
-			p = new OWL2ELProfile();
-			OWLProfileReport r2 = p.checkOntology(getO());
-			current_profile_reports.put(ViolatesOWLELAxiomPattern.class, r2);
+			OWLProfileReport r2 = new OWL2ELProfile().checkOntology(getO());
+			reportManager.addReport(ViolatesOWLELAxiomPattern.class, r2);
 
 			setProgress(10);
-			p = new OWL2RLProfile();
-			OWLProfileReport r3 = p.checkOntology(getO());
-			current_profile_reports.put(ViolatesOWLRLAxiomPattern.class, r3);
+			OWLProfileReport r3 = new OWL2RLProfile().checkOntology(getO());
+			reportManager.addReport(ViolatesOWLRLAxiomPattern.class, r3);
 
 			setProgress(15);
-			p = new OWL2QLProfile();
-			OWLProfileReport r4 = p.checkOntology(getO());
-			current_profile_reports.put(ViolatesOWLQLAxiomPattern.class, r4);
+			OWLProfileReport r4 =  new OWL2QLProfile().checkOntology(getO());
+			reportManager.addReport(ViolatesOWLQLAxiomPattern.class, r4);
 		}
 
 		private void updateInferrences() {
@@ -1326,13 +1187,13 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 			long init_run_id = System.currentTimeMillis();
 			Set<AxiomType> types = getAxiomTypesSelectedInGUI();
 			if (!getR().isConsistent()) {
-				Set<OWLAxiom> asserted = new HashSet<OWLAxiom>();
-				OWLAxiom ax = getOWLDataFactory().getOWLSubClassOfAxiom(getOWLDataFactory().getOWLThing(),
-						getOWLDataFactory().getOWLNothing());
-				Set<AxiomPattern> patterns = new HashSet<AxiomPattern>();
+				Set<OWLAxiom> asserted = new HashSet<>();
+				OWLAxiom ax = getOWLDataFactory().getOWLSubClassOfAxiom(df.getOWLThing(),
+						df.getOWLNothing());
+				Set<AxiomPattern> patterns = new HashSet<>();
 				patterns.add(AxiomPatternFactory.getInconsistentOntologyAxiomPattern());
 				WhatifInferenceConsequence con = new WhatifInferenceConsequence(ax, patterns);
-				Set<WhatifInferenceConsequence> inferred = new HashSet<WhatifInferenceConsequence>();
+				Set<WhatifInferenceConsequence> inferred = new HashSet<>();
 				inferred.add(con);
 				WhatifUtils.p("ASS: " + asserted.size());
 				WhatifUtils.p("INF: " + inferred.size());
@@ -1356,12 +1217,12 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		}
 
 		private Set<WhatifInferenceConsequence> getWhatifAxioms(Set<OWLAxiom> axioms, Set<OWLAxiom> asserted) {
-			Set<WhatifInferenceConsequence> wiaxioms = new HashSet<WhatifInferenceConsequence>();
+			Set<WhatifInferenceConsequence> wiaxioms = new HashSet<>();
 			for (OWLAxiom ax : axioms) {
 				if (ax instanceof OWLEquivalentClassesAxiom) {
 					OWLEquivalentClassesAxiom axe = (OWLEquivalentClassesAxiom) ax;
 					OWLDataFactory df = getO().getOWLOntologyManager().getOWLDataFactory();
-					Set<OWLAxiom> neweqaxioms = new HashSet<OWLAxiom>();
+					Set<OWLAxiom> neweqaxioms = new HashSet<>();
 					for (OWLClassExpression a : axe.getClassExpressions()) {
 						for (OWLClassExpression b : axe.getClassExpressions()) {
 							OWLEquivalentClassesAxiom axenew = df.getOWLEquivalentClassesAxiom(a, b);
@@ -1391,7 +1252,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 
 		String currentProcess = "Progress";
 
-		public String getCurrentProcess() {
+		String getCurrentProcess() {
 			return currentProcess;
 		}
 	}
@@ -1476,17 +1337,17 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 	}
 
 	@Override
-	public void ontologiesChanged(List<? extends OWLOntologyChange> arg0) throws OWLException {
+	public void ontologiesChanged(List<? extends OWLOntologyChange> arg0) {
 		WhatifUtils.p("ontologiesChanged(), ReasonerStatus: " + getReasonerStatus());
 		renderSyncStatus(false);
-		// TODO Does this waste time:
+		/* TODO Does this waste time: */
 		gen = genFac.createExplanationGenerator(getO());
 		incongen = incongenFac.createExplanationGenerator(getO());
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if ("progress" == evt.getPropertyName()) {
+		if ("progress".equals(evt.getPropertyName())) {
 			int progress = (Integer) evt.getNewValue();
 			progressBar.setValue(progress);
 			taskOutput.setText(task.getCurrentProcess());
@@ -1494,9 +1355,9 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 	}
 
 	@Override
-	public void selectionChanged() throws Exception {
+	public void selectionChanged() {
+		WhatifUtils.p("selectionChanged()");
 		if (cb_selected.isSelected()) {
-			WhatifUtils.p("selectionChanged()");
 			updateConsequenceTables();
 			updateView();
 		}
@@ -1513,31 +1374,48 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		// filterTautologies(inferred);
 		filterTrash(inferred);
 		ReasonerRunDiff newstate = new ReasonerRunDiff(init_run_id, asserted, inferred, types);
-
 		newstate.setReasoningTime(startreasonertime, endreasonertime);
 
+
+
+		if (history_diffs.size() > 0) {
+			selected_history_point = history_diffs.get(history_diffs.size() - 1);
+
+			int index = history_diffs.size() - 1;
+			Set<OWLAxiom> prev = index > 0 ? history_diffs.get(index).getAssertions() : new HashSet<>();
+			Set<OWLAxiom> currentcompare = newstate.getAssertions();
+			Set<OWLAxiom> added = new HashSet<>(currentcompare);
+			added.removeAll(prev);
+
+			Set<WhatifConsequence> addition_consequences = getAdditionConsequences(added, currentcompare);
+			WhatifUtils.p("addiditionCON: " + addition_consequences.size());
+			newstate.addAddedAssertionConsequences(addition_consequences);
+		}
+		history_diffs.add(newstate);
+
+		JRadioButton rb = addLastHIstoryRadioButton();
+		table_history_select.setHistoryRun(newstate, rb);
+	}
+
+	private JRadioButton addLastHIstoryRadioButton() {
 		JRadioButton rb = new JRadioButton();
 		rb.setEnabled(false);
 		rb.setSelected(false);
 
-		rb.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
-						"rb_changehistory", "NA", "wii");
-				DefaultTableModel dtm = (DefaultTableModel) table_history_select.getModel();
-				int nRow = dtm.getRowCount();
-				for (int i = 0; i < nRow; i++) {
-					if (dtm.getValueAt(i, 2).equals(e.getSource())) {
-						selected_history_point = (ReasonerRunDiff) dtm.getValueAt(i, 1);
-					}
+		rb.addActionListener(e -> {
+			EventLogging.saveEvent(System.currentTimeMillis(), getOWLWorkspace().getSelectedTab().getId(),
+					"rb_changehistory", "NA", "wii");
+			DefaultTableModel dtm = (DefaultTableModel) table_history_select.getModel();
+			int nRow = dtm.getRowCount();
+			for (int i = 0; i < nRow; i++) {
+				if (dtm.getValueAt(i, 2).equals(e.getSource())) {
+					selected_history_point = (ReasonerRunDiff) dtm.getValueAt(i, 1);
 				}
-				// SwingUtilities.invokeLater(updateOptions);
-				updateDiff();
-				updateConsequenceTables();
-				updateView();
 			}
+			// SwingUtilities.invokeLater(updateOptions);
+			updateDiff();
+			updateConsequenceTables();
+			updateView();
 		});
 
 		if (lastButton != null) {
@@ -1547,26 +1425,11 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 
 		buttong_group_table_history_select.add(rb);
 		lastButton = rb;
-		table_history_select.setHistoryRun(newstate, rb);
-		if (history_diffs.size() > 0) {
-			selected_history_point = history_diffs.get(history_diffs.size() - 1);
-
-			int index = history_diffs.size() - 1;
-			Set<OWLAxiom> prev = index > 0 ? history_diffs.get(index).getAssertions() : new HashSet<OWLAxiom>();
-			Set<OWLAxiom> currentcompare = newstate.getAssertions();
-			Set<OWLAxiom> added = new HashSet<OWLAxiom>();
-			added.addAll(currentcompare);
-			added.removeAll(prev);
-
-			Set<WhatifConsequence> addition_consequences = getAdditionConsequences(added, currentcompare);
-			WhatifUtils.p("addiditionCON: " + addition_consequences.size());
-			newstate.addAddedAssertionConsequences(addition_consequences);
-		}
-		history_diffs.add(newstate);
+		return rb;
 	}
 
 	private void filterTrash(Set<WhatifInferenceConsequence> filtered) {
-		Set<WhatifInferenceConsequence> rem = new HashSet<WhatifInferenceConsequence>();
+		Set<WhatifInferenceConsequence> rem = new HashSet<>();
 
 		for (WhatifConsequence con : filtered) {
 			if (con instanceof WhatifInferenceConsequence) {
@@ -1587,20 +1450,21 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		/*
 		 * for (OWLAxiom ax : axioms) { WhatifUtils.p(ax); }
 		 */
-		Set<WhatifConsequence> cons = new HashSet<WhatifConsequence>();
+		Set<WhatifConsequence> cons = new HashSet<>();
 		for (OWLAxiom ax : axioms) {
 			Set<AxiomPattern> matches = getMatchingAxiomPatterns(ax, AxiomPatternFactory.getChangesetPatterns(),
 					assertions);
 			for (AxiomPattern p : matches) {
-				cons.add(new WhatifAddedAssertionConsequence(ax, new HashSet<AxiomPattern>(Collections.singleton(p))));
+				cons.add(new WhatifAddedAssertionConsequence(ax, new HashSet<>(Collections.singleton(p))));
 			}
 		}
+
 		return cons;
 	}
 
 	private Set<AxiomPattern> getMatchingAxiomPatterns(OWLAxiom axenew, Set<AxiomPattern> patterns,
 			Set<OWLAxiom> asserted) {
-		Set<AxiomPattern> matches = new HashSet<AxiomPattern>();
+		Set<AxiomPattern> matches = new HashSet<>();
 
 		for (AxiomPattern p : patterns) {
 			long start = System.currentTimeMillis();
@@ -1639,13 +1503,8 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 				if (prio == AxiomPriority.REMOVE) {
 					continue;
 				}
-				// WhatifUtils.p(p.getClass());
-				// (Class<? extends ProfileAxiomPattern>)
-				if (p.matchesPattern(axenew, current_profile_reports.get(p.getClass()))) {
-					// WhatifUtils.p("OKIDOKI");
+				if (reportManager.matches(axenew,(ProfileAxiomPattern)p)) {
 					matches.add(p);
-				} else {
-					// WhatifUtils.p("NOMATCH");
 				}
 				profile += (System.currentTimeMillis() - st);
 			} else {
@@ -1654,9 +1513,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 				}
 			}
 			long end = System.currentTimeMillis();
-			if (!pattern_timings.containsKey(p)) {
-				pattern_timings.put(p, 0l);
-			}
+			if (!pattern_timings.containsKey(p)) pattern_timings.put(p, 0L);
 			pattern_timings.put(p, pattern_timings.get(p) + (end - start));
 			total += end - start;
 		}
@@ -1669,8 +1526,8 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 	 */
 	private Map<WhatifConsequence, AxiomPriority> prepareAssertionConsequences(OWLEntity entity,
 			Set<OWLEntity> selectedinselector) {
-		Set<WhatifConsequence> asserted = new HashSet<WhatifConsequence>(this.consequences_asserted);
-		Map<WhatifConsequence, AxiomPriority> infs = new HashMap<WhatifConsequence, AxiomPriority>();
+		Set<WhatifConsequence> asserted = new HashSet<>(this.consequences_asserted);
+		Map<WhatifConsequence, AxiomPriority> infs = new HashMap<>();
 		if (cb_selected.isSelected()) {
 			filterAxiomsByEntity(asserted, Collections.singleton(entity));
 		} else if (!selectedinselector.isEmpty()) {
@@ -1696,7 +1553,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		} else if (!selectedinselector.isEmpty()) {
 			filterAxiomsByEntity(removed_inferred, selectedinselector);
 		}
-		HashMap<WhatifConsequence, AxiomPriority> infsb = new HashMap<WhatifConsequence, AxiomPriority>();
+		HashMap<WhatifConsequence, AxiomPriority> infsb = new HashMap<>();
 		for (WhatifConsequence con : removed_inferred) {
 			AxiomPriority prio = getPriority(con);
 			if (prio != AxiomPriority.REMOVE) {
@@ -1717,7 +1574,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 			filterAxiomsByEntity(inferred, selectedinselector);
 		}
 		addCriticalInferences(inferred);
-		Map<WhatifConsequence, AxiomPriority> infsa = new HashMap<WhatifConsequence, AxiomPriority>();
+		Map<WhatifConsequence, AxiomPriority> infsa = new HashMap<>();
 		for (WhatifConsequence con : inferred) {
 			AxiomPriority prio = getPriority(con);
 			if (prio != AxiomPriority.REMOVE) {
@@ -1729,7 +1586,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 
 	private Set<WhatifConsequence> filterSelectedTypes(Set<WhatifConsequence> filtered) {
 		Set<AxiomType> types = getAxiomTypesSelectedInGUI();
-		Set<WhatifConsequence> add = new HashSet<WhatifConsequence>();
+		Set<WhatifConsequence> add = new HashSet<>();
 		for (WhatifConsequence con : filtered) {
 			if (con instanceof WhatifInferenceConsequence) {
 				WhatifInferenceConsequence ax = (WhatifInferenceConsequence) con;
@@ -1742,7 +1599,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 	}
 
 	private void filterTautologies(Set<? extends WhatifConsequence> filtered) {
-		Set<WhatifInferenceConsequence> rem = new HashSet<WhatifInferenceConsequence>();
+		Set<WhatifInferenceConsequence> rem = new HashSet<>();
 
 		for (WhatifConsequence con : filtered) {
 			if (con instanceof WhatifInferenceConsequence) {
@@ -1758,7 +1615,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 	}
 
 	private void filterAxiomsByEntity(Set<? extends WhatifConsequence> filtered, Set<OWLEntity> es) {
-		Set<WhatifConsequence> rem = new HashSet<WhatifConsequence>();
+		Set<WhatifConsequence> rem = new HashSet<>();
 
 		for (WhatifConsequence con : filtered) {
 			boolean out = true;
@@ -1814,65 +1671,66 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 		 */
 		ReasonerRunDiff latest = getLatestSnapshot();
 
-		Set<AxiomType> l = latest.getAxiomTypes();
-		Set<AxiomType> d = selected_history_point.getAxiomTypes();
+		if(latest!=null) {
+			Set<AxiomType> l = latest.getAxiomTypes();
+			Set<AxiomType> d = selected_history_point.getAxiomTypes();
 
-		Set<AxiomType> intersect = new HashSet<AxiomType>();
-		intersect.addAll(l);
-		intersect.retainAll(d);
+			Set<AxiomType> intersect = new HashSet<>(l);
+			intersect.retainAll(d);
 
-		Set<AxiomType> different_axiomtypes = new HashSet<AxiomType>();
-		different_axiomtypes.addAll(l);
-		different_axiomtypes.addAll(d);
-		different_axiomtypes.removeAll(intersect);
+			Set<AxiomType> different_axiomtypes = new HashSet<>();
+			different_axiomtypes.addAll(l);
+			different_axiomtypes.addAll(d);
+			different_axiomtypes.removeAll(intersect);
 
-		if (history_diffs.indexOf(selected_history_point) > 0) {
-			if (!different_axiomtypes.isEmpty()) {
-				StringBuilder sb = new StringBuilder();
-				sb.append(
-						"The snapshot you have selected has a different set of precomputed inferences. The following kinds of inferences are removed from the analysis: "
-								+ "\n" + "\n");
-				for (AxiomType type : different_axiomtypes) {
-					sb.append(type.getName() + " " + "\n");
+			if (history_diffs.indexOf(selected_history_point) > 0) {
+				if (!different_axiomtypes.isEmpty()) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(
+							"The snapshot you have selected has a different set of precomputed inferences. The following kinds of inferences are removed from the analysis: "
+									+ "\n" + "\n");
+					for (AxiomType type : different_axiomtypes) {
+						sb.append(type.getName() + " " + "\n");
+					}
+					JOptionPane.showConfirmDialog(this, sb.toString());
 				}
-				JOptionPane.showConfirmDialog(this, sb.toString());
 			}
+
+			consequences_inferred.clear();
+			consequences_removed_inferred.clear();
+
+			this.consequences_inferred.addAll(latest.getInferences());
+			this.consequences_inferred.removeAll(selected_history_point.getInferences());
+			removeAxiomsOfType(this.consequences_inferred, different_axiomtypes);
+
+			this.consequences_asserted.addAll(latest.getAddedAssertionConsequences());
+			this.consequences_asserted.removeAll(selected_history_point.getAddedAssertionConsequences());
+			// removeAxiomsOfType(this.asserted, different_axiomtypes);
+
+			this.consequences_removed_inferred.addAll(selected_history_point.getInferences());
+			this.consequences_removed_inferred.removeAll(latest.getInferences());
+			removeAxiomsOfType(this.consequences_removed_inferred, different_axiomtypes);
+			if (getR().isConsistent()) {
+				makeSureLost(this.consequences_removed_inferred);
+			}
+
+			/*
+			 * Update axiomlists in history panel
+			 */
+
+			list_history_added_axioms.clearAxioms();
+			list_history_added_axioms.addAxioms(getAddedAxiomsComparedToHistoryState());
+			list_history_removed_axioms.clearAxioms();
+			list_history_removed_axioms.addAxioms(getRemovedAxiomsComparedToHistoryState());
+			list_history_added_axioms.revalidate();
+			list_history_removed_axioms.revalidate();
+			list_history_added_axioms.repaint();
+			list_history_removed_axioms.repaint();
 		}
-
-		consequences_inferred.clear();
-		consequences_removed_inferred.clear();
-
-		this.consequences_inferred.addAll(latest.getInferences());
-		this.consequences_inferred.removeAll(selected_history_point.getInferences());
-		removeAxiomsOfType(this.consequences_inferred, different_axiomtypes);
-
-		this.consequences_asserted.addAll(latest.getAddedAssertionConsequences());
-		this.consequences_asserted.removeAll(selected_history_point.getAddedAssertionConsequences());
-		// removeAxiomsOfType(this.asserted, different_axiomtypes);
-
-		this.consequences_removed_inferred.addAll(selected_history_point.getInferences());
-		this.consequences_removed_inferred.removeAll(latest.getInferences());
-		removeAxiomsOfType(this.consequences_removed_inferred, different_axiomtypes);
-		if (getR().isConsistent()) {
-			makeSureLost(this.consequences_removed_inferred);
-		}
-
-		/*
-		 * Update axiomlists in history panel
-		 */
-
-		list_history_added_axioms.clearAxioms();
-		list_history_added_axioms.addAxioms(getAddedAxiomsComparedToHistoryState());
-		list_history_removed_axioms.clearAxioms();
-		list_history_removed_axioms.addAxioms(getRemovedAxiomsComparedToHistoryState());
-		list_history_added_axioms.revalidate();
-		list_history_removed_axioms.revalidate();
-		list_history_added_axioms.repaint();
-		list_history_removed_axioms.repaint();
 	}
 
 	private void removeAxiomsOfType(Set<WhatifConsequence> consequences, Set<AxiomType> types) {
-		Set<WhatifConsequence> rem = new HashSet<WhatifConsequence>();
+		Set<WhatifConsequence> rem = new HashSet<>();
 		for (WhatifConsequence con : consequences) {
 			if (con instanceof WhatifInferenceConsequence) {
 				WhatifInferenceConsequence ax = (WhatifInferenceConsequence) con;
@@ -1894,7 +1752,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 	}
 
 	private Set<AxiomType> getAllAxiomTypes() {
-		Set<AxiomType> types = new HashSet<AxiomType>();
+		Set<AxiomType> types = new HashSet<>();
 		types.add(AxiomType.SUBCLASS_OF);
 		types.add(AxiomType.SUB_OBJECT_PROPERTY);
 		types.add(AxiomType.SUB_DATA_PROPERTY);
@@ -1928,8 +1786,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 	}
 
 	private Set<OWLEntity> getSelectedObjects() {
-		Set<OWLEntity> selectedinselector = entityselect.getSelectedObjects();
-		return selectedinselector;
+		return entityselect.getSelectedObjects();
 	}
 
 	private WorkspaceFrame getFrame() {
@@ -1938,12 +1795,17 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 
 	private void makeSureLost(Set<WhatifConsequence> axioms) {
 		WhatifUtils.p("Warning: makeSureLost(). Overly costly function");
-		Set<WhatifConsequence> rem = new HashSet<WhatifConsequence>();
+		Set<WhatifConsequence> rem = new HashSet<>();
 		for (WhatifConsequence con : axioms) {
 			if (con instanceof WhatifInferenceConsequence) {
 				WhatifInferenceConsequence ax = (WhatifInferenceConsequence) con;
-				if (getR().isEntailed(ax.getOWLAxiom())) {
-					rem.add(con);
+				try {
+					if (getR().isEntailed(ax.getOWLAxiom())) {
+						rem.add(con);
+					}
+				} catch(Exception e) {
+					log.trace(e.getMessage(),e);
+					break;
 				}
 			}
 		}
@@ -1952,25 +1814,25 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 
 	@Override
 	public Collection<OWLProfileViolation> getViolations(Class<? extends ProfileAxiomPattern> cl) {
-		return current_profile_reports.get(cl).getViolations();
+		return reportManager.getViolations(cl);
 	}
 
 	private Set<OWLAxiom> getAddedAxiomsComparedToHistoryState() {
-		Set<OWLAxiom> added = new HashSet<OWLAxiom>();
+
 		int index = history_diffs.indexOf(selected_history_point);
-		Set<OWLAxiom> prev = index > 0 ? history_diffs.get(index - 1).getAssertions() : new HashSet<OWLAxiom>();
+		Set<OWLAxiom> prev = index > 0 ? history_diffs.get(index - 1).getAssertions() : new HashSet<>();
 		Set<OWLAxiom> currentcompare = selected_history_point.getAssertions();
-		added.addAll(currentcompare);
+		Set<OWLAxiom> added = new HashSet<>(currentcompare);
 		added.removeAll(prev);
 		return added;
 	}
 
 	private Set<OWLAxiom> getRemovedAxiomsComparedToHistoryState() {
-		Set<OWLAxiom> removed = new HashSet<OWLAxiom>();
+
 		int index = history_diffs.indexOf(selected_history_point);
-		Set<OWLAxiom> prev = index > 0 ? history_diffs.get(index - 1).getAssertions() : new HashSet<OWLAxiom>();
+		Set<OWLAxiom> prev = index > 0 ? history_diffs.get(index - 1).getAssertions() : new HashSet<>();
 		Set<OWLAxiom> currentcompare = selected_history_point.getAssertions();
-		removed.addAll(prev);
+		Set<OWLAxiom> removed = new HashSet<>(prev);
 		removed.removeAll(currentcompare);
 		return removed;
 	}
@@ -1984,7 +1846,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 	}
 
 	private Set<AxiomType> getAxiomTypesSelectedInGUI() {
-		Set<AxiomType> types = new HashSet<AxiomType>();
+		Set<AxiomType> types = new HashSet<>();
 
 		ListModel model = axiomtypelist.getModel();
 
@@ -2009,10 +1871,7 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 	}
 
 	private String getDate() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date now = new Date();
-		String strDate = sdf.format(now);
-		return strDate;
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 	}
 
 	private void determineTautologyStatus(Set<WhatifInferenceConsequence> axioms) {

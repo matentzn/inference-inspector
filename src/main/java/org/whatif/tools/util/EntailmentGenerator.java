@@ -10,14 +10,17 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.InferredAxiomGenerator;
 import org.whatif.tools.axiomgenerator.*;
-
+import org.apache.log4j.Logger;
+import org.whatif.tools.view.EntailmentInspectorView;
 
 public class EntailmentGenerator {
+
+	private static final Logger log = Logger.getLogger(EntailmentInspectorView.class);
 
 	public static Set<OWLAxiom> getInferredAxioms(OWLReasoner r, OWLOntology o,
 			Set<AxiomType> types, boolean inferredonly) {
 		
-		Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
+		Set<OWLAxiom> axioms = new HashSet<>();
 		for (AxiomType type : types) {
 			if (type.equals(AxiomType.SUBCLASS_OF)) {
 				WhatifUtils.p("SUBCLASS_OF");
@@ -97,10 +100,13 @@ public class EntailmentGenerator {
 
 	private static Collection<? extends OWLAxiom> generateInferrences(OWLReasoner r,
 			OWLOntology o, InferredAxiomGenerator<? extends OWLAxiom> gen) {
-		// List<InferredAxiomGenerator<? extends OWLAxiom>> gens = new
-		// ArrayList<InferredAxiomGenerator<? extends OWLAxiom>>();
-		// gens.add(gen);
-		return gen.createAxioms(o.getOWLOntologyManager().getOWLDataFactory(), r);
+		Set<OWLAxiom> ax = new HashSet<>();
+		try{
+			ax.addAll(gen.createAxioms(o.getOWLOntologyManager().getOWLDataFactory(), r));
+		} catch(Exception e) {
+			log.trace(e.getMessage(),e);
+		}
+		return ax;
 	}
 
 }

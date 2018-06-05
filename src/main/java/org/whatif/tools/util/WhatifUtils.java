@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
+import org.apache.log4j.Logger;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -17,13 +18,18 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.whatif.tools.view.EntailmentInspectorView;
 
 //import uk.ac.manchester.cs.diff.Ecco;
 
 public class WhatifUtils {
-	
+
+	private static final org.apache.log4j.Logger log = Logger.getLogger(EntailmentInspectorView.class);
+
+
 	public static void p(Object o) {
 		System.out.println(o);
+		log.info(o);
 	}
 	
 	public static OWLEntity getPrimaryEntityOfAxiom(OWLAxiom ax) {

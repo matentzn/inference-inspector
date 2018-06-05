@@ -5,3 +5,7 @@ build.properties
 META-INF/
 target/
 
+.idea
+inference.inspector.iml
+deploy.sh
+deploy.sh
