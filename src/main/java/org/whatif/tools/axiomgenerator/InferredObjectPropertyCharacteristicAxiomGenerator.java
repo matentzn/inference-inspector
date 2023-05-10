@@ -4,6 +4,7 @@ import java.util.Set;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyCharacteristicAxiom;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.InferredObjectPropertyAxiomGenerator;
@@ -15,18 +16,6 @@ import org.semanticweb.owlapi.util.InferredObjectPropertyAxiomGenerator;
  */
 public class InferredObjectPropertyCharacteristicAxiomGenerator
         extends InferredObjectPropertyAxiomGenerator<OWLObjectPropertyCharacteristicAxiom> {
-
-    @Override
-    protected void addAxioms(OWLObjectProperty entity, OWLReasoner reasoner, OWLDataFactory dataFactory,
-            Set<OWLObjectPropertyCharacteristicAxiom> result) {
-        addIfEntailed(dataFactory.getOWLFunctionalObjectPropertyAxiom(entity), reasoner, result);
-        addIfEntailed(dataFactory.getOWLInverseFunctionalObjectPropertyAxiom(entity), reasoner, result);
-        addIfEntailed(dataFactory.getOWLSymmetricObjectPropertyAxiom(entity), reasoner, result);
-        addIfEntailed(dataFactory.getOWLAsymmetricObjectPropertyAxiom(entity), reasoner, result);
-        addTransitiveAxiomIfEntailed(entity, reasoner, dataFactory, result);
-        addIfEntailed(dataFactory.getOWLReflexiveObjectPropertyAxiom(entity), reasoner, result);
-        addIfEntailed(dataFactory.getOWLIrreflexiveObjectPropertyAxiom(entity), reasoner, result);
-    }
 
     protected static void addTransitiveAxiomIfEntailed(OWLObjectProperty property, OWLReasoner reasoner,
             OWLDataFactory dataFactory, Set<OWLObjectPropertyCharacteristicAxiom> result) {
@@ -71,5 +60,17 @@ public class InferredObjectPropertyCharacteristicAxiomGenerator
     @Override
     public String getLabel() {
         return "Object property characteristics";
+    }
+
+    @Override
+    protected void addAxioms(OWLObjectProperty entity, OWLReasoner reasoner, OWLDataFactory dataFactory,
+            Set<OWLObjectPropertyCharacteristicAxiom> result, Set<OWLObjectPropertyExpression> nonSimpleProperties) {
+                addIfEntailed(dataFactory.getOWLFunctionalObjectPropertyAxiom(entity), reasoner, result);
+                addIfEntailed(dataFactory.getOWLInverseFunctionalObjectPropertyAxiom(entity), reasoner, result);
+                addIfEntailed(dataFactory.getOWLSymmetricObjectPropertyAxiom(entity), reasoner, result);
+                addIfEntailed(dataFactory.getOWLAsymmetricObjectPropertyAxiom(entity), reasoner, result);
+                addTransitiveAxiomIfEntailed(entity, reasoner, dataFactory, result);
+                addIfEntailed(dataFactory.getOWLReflexiveObjectPropertyAxiom(entity), reasoner, result);
+                addIfEntailed(dataFactory.getOWLIrreflexiveObjectPropertyAxiom(entity), reasoner, result);
     }
 }

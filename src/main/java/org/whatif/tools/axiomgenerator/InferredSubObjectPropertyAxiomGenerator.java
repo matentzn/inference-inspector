@@ -26,14 +26,6 @@ public class InferredSubObjectPropertyAxiomGenerator
 	}
 
 	@Override
-	protected void addAxioms(OWLObjectProperty entity, OWLReasoner reasoner, OWLDataFactory dataFactory,
-			Set<OWLSubObjectPropertyOfAxiom> result) {
-		for (OWLObjectPropertyExpression sup : reasoner.getSuperObjectProperties(entity, direct).getFlattened()) {
-			result.add(dataFactory.getOWLSubObjectPropertyOfAxiom(entity, sup));
-		}
-	}
-
-	@Override
 	protected Set<OWLObjectProperty> getEntities(OWLOntology ont) {
 		Set<OWLObjectProperty> s = ont.getObjectPropertiesInSignature();
 		if (!s.isEmpty()) {
@@ -46,5 +38,13 @@ public class InferredSubObjectPropertyAxiomGenerator
 	@Override
 	public String getLabel() {
 		return "Sub object properties";
+	}
+
+	@Override
+	protected void addAxioms(OWLObjectProperty entity, OWLReasoner reasoner, OWLDataFactory dataFactory,
+			Set<OWLSubObjectPropertyOfAxiom> result, Set<OWLObjectPropertyExpression> nonSimpleProperties) {
+				for (OWLObjectPropertyExpression sup : reasoner.getSuperObjectProperties(entity, direct).getFlattened()) {
+					result.add(dataFactory.getOWLSubObjectPropertyOfAxiom(entity, sup));
+				}
 	}
 }

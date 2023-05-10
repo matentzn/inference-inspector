@@ -9,3 +9,4 @@ target/
 inference.inspector.iml
 deploy.sh
 deploy.sh
+.vscode/settings.json

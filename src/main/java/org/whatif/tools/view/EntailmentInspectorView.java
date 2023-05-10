@@ -419,9 +419,9 @@ public class EntailmentInspectorView extends AbstractOWLSelectionViewComponent i
 
 	private void prepareExplanationGenerators() {
 		genFac = ExplanationManager.createExplanationGeneratorFactory(
-				getOWLModelManager().getOWLReasonerManager().getCurrentReasonerFactory().getReasonerFactory());
+				getOWLModelManager().getOWLReasonerManager().getCurrentReasonerFactory().getReasonerFactory(), null);
 		incongenFac = new InconsistentOntologyExplanationGeneratorFactory(
-				getOWLModelManager().getOWLReasonerManager().getCurrentReasonerFactory().getReasonerFactory(), 10000);
+				getOWLModelManager().getOWLReasonerManager().getCurrentReasonerFactory().getReasonerFactory(), null, null, 10000);
 		gen = genFac.createExplanationGenerator(getO());
 		incongen = incongenFac.createExplanationGenerator(getO());
 	}
