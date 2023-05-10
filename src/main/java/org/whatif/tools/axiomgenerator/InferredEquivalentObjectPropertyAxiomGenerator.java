@@ -20,17 +20,6 @@ public class InferredEquivalentObjectPropertyAxiomGenerator
 		extends InferredObjectPropertyAxiomGenerator<OWLEquivalentObjectPropertiesAxiom> {
 
 	@Override
-	protected void addAxioms(OWLObjectProperty entity, OWLReasoner reasoner, OWLDataFactory dataFactory,
-			Set<OWLEquivalentObjectPropertiesAxiom> result) {
-		Set<OWLObjectPropertyExpression> equivProps = new HashSet<OWLObjectPropertyExpression>(
-				reasoner.getEquivalentObjectProperties(entity).getEntities());
-		equivProps.add(entity);
-		if (equivProps.size() > 1) {
-			result.add(dataFactory.getOWLEquivalentObjectPropertiesAxiom(equivProps));
-		}
-	}
-
-	@Override
 	public String getLabel() {
 		return "Equivalent object properties";
 	}
@@ -43,6 +32,17 @@ public class InferredEquivalentObjectPropertyAxiomGenerator
 			s.add(ont.getOWLOntologyManager().getOWLDataFactory().getOWLTopObjectProperty());
 		}
 		return s;
+	}
+
+	@Override
+	protected void addAxioms(OWLObjectProperty entity, OWLReasoner reasoner, OWLDataFactory dataFactory,
+			Set<OWLEquivalentObjectPropertiesAxiom> result, Set<OWLObjectPropertyExpression> nonSimpleProperties) {
+				Set<OWLObjectPropertyExpression> equivProps = new HashSet<OWLObjectPropertyExpression>(
+					reasoner.getEquivalentObjectProperties(entity).getEntities());
+					equivProps.add(entity);
+					if (equivProps.size() > 1) {
+						result.add(dataFactory.getOWLEquivalentObjectPropertiesAxiom(equivProps));
+					}
 	}
 
 }
